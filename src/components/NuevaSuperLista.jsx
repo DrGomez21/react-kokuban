@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { Tarjeta } from "./Tarjeta";
 import { Modal } from "./Modal";
 
-export function Lista({ titulo, tareas, onAgregarTarea }) {
+export function Lista({ titulo, tareas, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarAcciones, setMostrarAcciones] = useState(false);
+    const [mostrarEditarTitulo, setMostrarEditarTitulo] = useState(false);
+    const [nuevoTitulo, setNuevoTitulo] = useState(titulo);
+    const [maxTarjetas, setMaxTarjetas] = useState(5);
     const [nuevaTarea, setNuevaTarea] = useState({
         title: '',
         description: '',
@@ -14,7 +17,7 @@ export function Lista({ titulo, tareas, onAgregarTarea }) {
     const [nuevaEtiqueta, setNuevaEtiqueta] = useState('');
 
     const agregarTarea = () => {
-        if (nuevaTarea.title && nuevaTarea.description) {
+        if (nuevaTarea.title && nuevaTarea.description && tareas.length < maxTarjetas) {
             onAgregarTarea({ ...nuevaTarea, id: Date.now() });
             setNuevaTarea({ title: '', description: '', tags: [], assignedTo: '' });
             setMostrarModal(false);
@@ -40,17 +43,28 @@ export function Lista({ titulo, tareas, onAgregarTarea }) {
         });
     };
 
-    const eliminarLista = () =>{
-        setMostrarAcciones(false)
-    }
+    const guardarNuevoTitulo = () => {
+        if (nuevoTitulo.trim()) {
+            onActualizarTitulo(titulo, nuevoTitulo.trim());
+            setMostrarEditarTitulo(false);
+        }
+    };
+
+    const isListaLlena = tareas.length >= maxTarjetas;
 
     return (
-        <div className="bg-white shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-64">
+        <div className={`bg-white shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-80 ${isListaLlena ? 'border-red-500' : ''}`}>
+            {isListaLlena && (
+                <span className="block w-full text-center text-red-500 font-bold mb-2">
+                    Lleno
+                </span>
+            )}
+            
             <div className="flex justify-between items-center py-2 mb-4">
                 <h4 className="montserrat-bold text-2xl mr-1">{titulo}</h4>
                 <button 
                     className="w-8 h-8 bg-slate-300 rounded hover:bg-slate-200 flex items-center justify-center"
-                    onClick={() => setMostrarAcciones(true) }>
+                    onClick={() => setMostrarAcciones(true)}>
                     <span className="text-lg">⋮</span>
                 </button>
             </div>
@@ -66,25 +80,87 @@ export function Lista({ titulo, tareas, onAgregarTarea }) {
                     />
                 ))}
 
-                <button
-                    onClick={() => setMostrarModal(true)}
-                    className="bg-[#FFE500] shadow-[.2rem_.2rem_#121212] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
-                    type="submit"
-                >
-                    + Nueva tarea
-                </button>
+                {!isListaLlena && (
+                    <button
+                        onClick={() => setMostrarModal(true)}
+                        className="bg-[#FFE500] shadow-[.2rem_.2rem_#121212] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
+                        type="submit"
+                    >
+                        + Nueva tarea
+                    </button>
+                )}
             </div>
 
+            {/* Modal de Acciones */}
             <Modal isOpen={mostrarAcciones} onClose={() => setMostrarAcciones(false)}>
                 <h3 className="text-lg montserrat-bold mb-4">Acciones de la Lista</h3>
-                <button 
-                    onClick={eliminarLista} 
-                    className="bg-red-500 text-white py-2 px-4 rounded-sm mb-2 w-full"
+                <div className="space-y-2">
+                    <button 
+                        onClick={() => {
+                            setMostrarAcciones(false);
+                            setMostrarEditarTitulo(true);
+                        }} 
+                        className="bg-blue-500 text-white py-2 px-4 rounded-sm mb-2 w-full"
                     >
-                    Eliminar Lista
-                </button>
+                        Cambiar nombre
+                    </button>
+                    <div className="flex items-center space-x-2 mb-2">
+                        <label className="flex-grow">Máximo de tarjetas:</label>
+                        <input
+                            type="number"
+                            value={maxTarjetas}
+                            onChange={(e) => setMaxTarjetas(Math.max(1, parseInt(e.target.value) || 1))}
+                            className="w-20 p-1 border border-gray-300 rounded"
+                            min="1"
+                        />
+                    </div>
+                    <button 
+                        onClick={() => {
+                            onEliminarLista();
+                            setMostrarAcciones(false);
+                        }} 
+                        className="bg-red-500 text-white py-2 px-4 rounded-sm w-full"
+                    >
+                        Eliminar Lista
+                    </button>
+                    <button 
+                        onClick={() => setMostrarAcciones(false)} 
+                        className="bg-gray-500 text-white py-2 px-4 rounded-sm w-full"
+                    >
+                        Cerrar
+                    </button>
+                </div>
             </Modal>
 
+            {/* Modal de Editar Título */}
+            <Modal isOpen={mostrarEditarTitulo} onClose={() => setMostrarEditarTitulo(false)}>
+                <h3 className="text-lg montserrat-bold mb-4">Editar nombre de la lista</h3>
+                <input
+                    type="text"
+                    value={nuevoTitulo}
+                    onChange={(e) => setNuevoTitulo(e.target.value)}
+                    className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-4"
+                />
+                <div className="flex justify-between">
+                    <button 
+                        onClick={() => {
+                            setNuevoTitulo(titulo);
+                            setMostrarEditarTitulo(false);
+                        }}
+                        className="bg-[#ff9292] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none"
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        onClick={guardarNuevoTitulo}
+                        className="bg-[#9eb0ff] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none"
+                    >
+                        Guardar
+                    </button>
+                </div>
+            </Modal>
+
+            {/* Modal de Nueva Tarea */}
             <Modal isOpen={mostrarModal} onClose={() => setMostrarModal(false)}>
                 <h3 className="text-lg montserrat-bold mb-4">Agregar Nueva Tarea</h3>
                 <div className="space-y-2">

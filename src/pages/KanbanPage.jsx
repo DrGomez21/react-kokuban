@@ -5,7 +5,6 @@ import axios from "axios";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
 
-
 export function KanbanPage() {
 
     const location = useLocation()
@@ -28,7 +27,6 @@ export function KanbanPage() {
     useEffect(() => {
         getUserData()
     }, [])
-
 
     return (
 
