@@ -23,7 +23,7 @@ export function LoginPage() {
                         borderRadius: '1px'
                     }
                 })
-                navigate('/tablero', { state: { token : response.data.token } })
+                navigate('/tablero', { state: { token : response.data.token, username : data.username } })
             }
         } catch(error) {
             if (error.response && error.response.status === 400) {

@@ -1,11 +1,11 @@
 
-export function Header() {
+export function Header({ user }) {
     return (
         <div className="flex justify-between p-3 place-items-center">
             <div className="flex">
                 <img src="/Kokuban-logo-minimal.svg" width={56} height={56} alt="Logotipo Mini" />
                 <div className="my-3 mx-3">
-                    <h2 className="montserrat-bold text-2xl">Bienvenido, Username</h2>
+                    <h2 className="montserrat-bold text-2xl">Bienvenido, {user ? user.username : ""}</h2>
                     <h4 className="montserrat-medium text-xs">Espacio (Nombre del espacio)</h4>
                 </div>
             </div>
