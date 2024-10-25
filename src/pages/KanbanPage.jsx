@@ -21,7 +21,7 @@ export function KanbanPage() {
             console.log(response.data)
         } catch (error) {
             console.error(error)
-            toast.error('Algo salió mal 😢 Por favor, vuelva a iniciar sesión')
+            toast.error('Algo salió mal 😢 Por favor, vuelva a iniciar sesión.')
         }
     }
 
