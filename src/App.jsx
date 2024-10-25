@@ -3,6 +3,7 @@ import { LoginPage } from "./pages/LoginPage"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { RegistroPage } from "./pages/RegistroPage";
 import { KanbanPage } from "./pages/KanbanPage";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/tablero" element={ <KanbanPage /> }/>
         </Routes>
       </div>
+      <Toaster />
     </BrowserRouter>
     
   )
