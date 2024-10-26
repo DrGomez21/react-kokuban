@@ -28,7 +28,6 @@ export function KanbanPage() {
 
             if (userFound) {
                 setUsuario(userFound)
-                console.log(usuario)
             } else {
                 toast.error("Ocurrió algo extraño :(")
             }
