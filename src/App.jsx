@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { RegistroPage } from "./pages/RegistroPage";
 import { KanbanPage } from "./pages/KanbanPage";
 import { Toaster } from "react-hot-toast";
+import { EspaciosPage } from "./pages/EspaciosPage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/login" element={ <LoginPage /> }/>
           <Route path="/registro" element={ <RegistroPage /> }/>
           <Route path="/tablero" element={ <KanbanPage /> }/>
+          <Route path="/espacios" element={ <EspaciosPage /> } />
         </Routes>
       </div>
       <Toaster />
