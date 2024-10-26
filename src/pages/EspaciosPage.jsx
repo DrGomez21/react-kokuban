@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { EspacioItem } from "../components/EspacioItem";
+import { Modal } from "../components/Modal";
 
 export function EspaciosPage() {
 
@@ -14,6 +16,10 @@ export function EspaciosPage() {
     const [usuario, setUsuario] = useState()
     const [espacios, setEspacios] = useState([])
     const [loading, setLoading] = useState(true)
+
+    const [mostrarModalNuevoEspacio, setMostrarModalNuevoEstado] = useState(false);
+
+    const {register, handleSubmit} = useForm()
     
     // Primero. Obtenemos el usuario registrado.
     const getUserData = async () => {
@@ -64,9 +70,31 @@ export function EspaciosPage() {
         }
     }
 
-    const nuevoEspacio = () => {
-        toast.success("Holi")
-    }
+    const crearEspacio = handleSubmit(async data => {
+        try {
+            const espacioCreado = {
+                nombre:data.nombre,
+                propietario:usuario.id
+            }
+            
+            const response = await axios.post('http://localhost:8000/api/espacios/', espacioCreado, {
+                headers: {
+                    Authorization: `Token ${token}`
+                }
+            })
+            if (response.status === 201) {
+                toast.success('Exitoso')
+                setMostrarModalNuevoEstado(false)
+                
+                // Actualizar la UI.
+                setEspacios(prevEspacios => [...prevEspacios, response.data]);
+            } else {
+                console.log(response)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    })
 
     useEffect(() => {
         getUserData()
@@ -85,7 +113,7 @@ export function EspaciosPage() {
                 <h2 className="montserrat-bold text-xl">Tus espacios</h2>
 
                 <button 
-                    onClick={nuevoEspacio}
+                    onClick={() => setMostrarModalNuevoEstado(true)}
                     className="bg-[#B2FF9E] hover:shadow-[.2rem_.2rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none">
                     Crear espacio
                 </button>
@@ -101,6 +129,43 @@ export function EspaciosPage() {
                     }
                 </div>
             </div>
+
+            <Modal isOpen={mostrarModalNuevoEspacio} onClose={() => setMostrarModalNuevoEstado(false)}>
+                <h3 className="text-lg montserrat-semibold mb-4">Crear espacio</h3>
+                <form onSubmit={crearEspacio} className="mt-4">
+                    <div className="mb-2">
+                        <label className="block text-[#121212] text-sm mb-2 montserrat-semibold" htmlFor="nombre">
+                        Nombre del espacio
+                        </label>
+                        <input
+                        className="shadow-[.2rem_.2rem_#121212] hover:shadow-[.4rem_.4rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="nombre"
+                        type="text"
+                        placeholder="Nombre del espacio"
+                        {...register ("nombre", {required:true})}
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                        <button
+                            className="bg-[#B2FF9E] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
+                            type="submit"
+                        >
+                            Crear ahora
+                        </button>
+                    </div>
+                </form>
+
+                <button
+                    className="bg-[#ff8686] mt-4 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
+                    onClick={() => setMostrarModalNuevoEstado(false)}
+                >
+                    Cancelar
+                </button>
+
+            </Modal>
+
+
         </div>
     )
 }
