@@ -11,7 +11,7 @@ export function EspacioItem({ espacio, token, usuario }) {
     return (
         <div  
             onClick={ irAlTablero }
-            className="bg-red-300 border-2 border-black p-3 rounded-base hover:cursor-pointer hover:shadow-light"
+            className="bg-[#F5FF70] border-[3px] shadow-[.2rem_.2rem_#121212] border-[#121212] hover:shadow-[.4rem_.4rem_#121212] hover:cursor-pointer duration-150 p-4 w-full"
         >
             <h3 className="montserrat-semibold">{espacio.nombre}</h3>
         </div>

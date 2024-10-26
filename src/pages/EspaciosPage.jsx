@@ -75,15 +75,23 @@ export function EspaciosPage() {
     if (loading) return <p>Cargando datos...</p>
 
     return (
-        <div className="">
+        <div className="bg-[#E7E6EF] h-screen">
+
             <h1 className="py-6 px-6 montserrat-bold text-3xl">Bienvenido, {usuario ? usuario.username : ""}</h1>
 
-            <button 
-                onClick={nuevoEspacio}
-                className="py-4 px-2 border border-black">
-                Crear espacio
-            </button>
+            {/* Mini header */}
+            <div className="flex px-6 justify-between items-center w-screen">
 
+                <h2 className="montserrat-bold text-xl">Tus espacios</h2>
+
+                <button 
+                    onClick={nuevoEspacio}
+                    className="bg-[#B2FF9E] hover:shadow-[.2rem_.2rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none">
+                    Crear espacio
+                </button>
+            </div>
+
+            {/* Contenedor de espacios */}
             <div className="px-8">
                 <div className="grid grid-cols-3 gap-3 my-3">
                     {
