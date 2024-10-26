@@ -96,6 +96,11 @@ export function EspaciosPage() {
         }
     })
 
+    // Función para actualizar el estado al eliminar un espacio
+    const handleDeleteEspacio = (espacioId) => {
+        setEspacios(prevEspacios => prevEspacios.filter(espacio => espacio.id !== espacioId));
+    };
+
     useEffect(() => {
         getUserData()
     }, [])
@@ -124,7 +129,7 @@ export function EspaciosPage() {
                 <div className="grid grid-cols-3 gap-3 my-3">
                     {
                         espacios.map(espacio => (
-                            <EspacioItem key={espacio.id} espacio={espacio} token={token} usuario={usuario}/>
+                            <EspacioItem key={espacio.id} espacio={espacio} token={token} usuario={usuario} onDelete={handleDeleteEspacio}/>
                         ))
                     }
                 </div>
@@ -162,9 +167,7 @@ export function EspaciosPage() {
                 >
                     Cancelar
                 </button>
-
             </Modal>
-
 
         </div>
     )
