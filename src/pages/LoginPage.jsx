@@ -24,7 +24,6 @@ export function LoginPage() {
                     }
                 })
                 navigate('/espacios', { state: { token : response.data.token, username : data.username } })
-                // navigate('/tablero', { state: { token : response.data.token, username : data.username } })
             }
         } catch(error) {
             if (error.response && error.response.status === 400) {
