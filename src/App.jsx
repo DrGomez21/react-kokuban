@@ -5,6 +5,7 @@ import { RegistroPage } from "./pages/RegistroPage";
 import { KanbanPage } from "./pages/KanbanPage";
 import { Toaster } from "react-hot-toast";
 import { EspaciosPage } from "./pages/EspaciosPage";
+import { TablerosPage } from "./pages/TablerosPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/registro" element={ <RegistroPage /> }/>
           <Route path="/tablero" element={ <KanbanPage /> }/>
           <Route path="/espacios" element={ <EspaciosPage /> } />
+          <Route path="/tabs" element={<TablerosPage />} />
         </Routes>
       </div>
       <Toaster />
