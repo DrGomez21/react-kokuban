@@ -24,7 +24,7 @@ export function KanbanPage() {
             
             <Header user={usuario} nombreEspacio={espacio.nombre} />
 
-            <div className="flex justify-center">
+            <div className="justify-start">
                 <TableroTareas />
             </div>
 
