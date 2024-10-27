@@ -6,7 +6,10 @@ export function Header({ user, nombreEspacio }) {
                 <img src="/Kokuban-logo-minimal.svg" width={56} height={56} alt="Logotipo Mini" />
                 <div className="my-3 mx-3">
                     <h2 className="montserrat-bold text-2xl">Bienvenido, {user ? user.username : ""}</h2>
-                    <h4 className="montserrat-medium text-xs">Espacio: {nombreEspacio}</h4>
+                    {
+                        nombreEspacio &&
+                        <h4 className="montserrat-medium text-xs">Espacio: {nombreEspacio}</h4> 
+                    }
                 </div>
             </div>
 
