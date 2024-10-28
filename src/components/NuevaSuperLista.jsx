@@ -2,18 +2,24 @@ import React, { useState } from 'react';
 import { Tarjeta } from "./Tarjeta";
 import { Modal } from "./Modal";
 
-export function Lista({ titulo, tareas, cant_max, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
+export function Lista({ listaId, titulo, tareas, cant_max, allTasks, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarAcciones, setMostrarAcciones] = useState(false);
     const [mostrarEditarTitulo, setMostrarEditarTitulo] = useState(false);
     const [nuevoTitulo, setNuevoTitulo] = useState(titulo);
-    const [maxTarjetas, setMaxTarjetas] = useState(5);
+    const [maxTarjetas, setMaxTarjetas] = useState(cant_max);
+    
     const [nuevaTarea, setNuevaTarea] = useState({
         title: '',
         description: '',
         tags: [],
         assignedTo: ''
     });
+
+    const getTarea = (idTarea) => {
+        return allTasks.find(t => t['id'] == idTarea)
+    }
+    
     const [nuevaEtiqueta, setNuevaEtiqueta] = useState('');
 
     const agregarTarea = () => {
@@ -50,10 +56,11 @@ export function Lista({ titulo, tareas, cant_max, onAgregarTarea, onEliminarList
         }
     };
 
-    const isListaLlena = tareas.length >= maxTarjetas;
-
+    // const isListaLlena = tareas.length >= maxTarjetas;
+    const isListaLlena = false
     return (
         <div className={`bg-white min-w-64 shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-80 ${isListaLlena ? 'border-red-500' : ''}`}>
+            
             {isListaLlena && (
                 <span className="block w-full text-center text-red-500 font-bold mb-2">
                     Lleno
@@ -70,15 +77,22 @@ export function Lista({ titulo, tareas, cant_max, onAgregarTarea, onEliminarList
             </div>
             
             <div className="space-y-4">
-                {tareas.map(tarea => (
-                    <Tarjeta 
-                        key={tarea.id}
-                        title={tarea.title}
-                        description={tarea.description}
-                        tags={tarea.tags}
-                        assignedTo={tarea.assignedTo}
-                    />
-                ))}
+                
+            {tareas.map(tarea => {
+                if (tarea.estado === listaId) {
+                    const tarjeta = getTarea(tarea.tarjeta);
+                    return (
+                        <Tarjeta 
+                            key={tarea.tarjeta}
+                            title={tarjeta.nombre_actividad}
+                            description={tarjeta.descripcion}
+                            tags={tarjeta.etiqueta}
+                            assignedTo="asignado"
+                        />
+                    );
+                }
+                return null; // Si la condición no se cumple, no se renderiza nada
+            })}
 
                 {!isListaLlena && (
                     <button
