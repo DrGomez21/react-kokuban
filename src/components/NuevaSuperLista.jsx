@@ -4,16 +4,20 @@ import { Modal } from "./Modal";
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { DetallesTarjeta } from "../components/DetallesTarjeta";
 
 export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usuario, onEliminarLista, onActualizarTitulo }) {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarAcciones, setMostrarAcciones] = useState(false);
     const [mostrarEditarTitulo, setMostrarEditarTitulo] = useState(false);
+    
     const [nuevoTitulo, setNuevoTitulo] = useState(titulo);
     const [maxTarjetas, setMaxTarjetas] = useState(cant_max);
-
     const [tareasUnion, setTareasUnion] = useState(tareas) // Esta es la union.
     const [tarjetero, setTarjetero] = useState(allTasks)    // Acá están todas las tareas.
+
+    const [mostrarDetalleTarjeta, setMostrarDetalleTarjeta] = useState(false)
+    const [tarjetaSeleccionada, setTarjetaSeleccionada] = useState(null);
 
     const {register, handleSubmit} = useForm()
     
@@ -87,6 +91,11 @@ export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usua
         }
     };
 
+    const abrirDetallesTarjeta = (tarea) => {
+        setTarjetaSeleccionada(tarea);
+        setMostrarDetalleTarjeta(true);
+    };
+
     const isListaLlena = false
     return (
         <div className={`bg-white min-w-64 shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-80 ${isListaLlena ? 'border-red-500' : ''}`}>
@@ -108,19 +117,20 @@ export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usua
             
             <div className="space-y-4">
                 
-            {tareasUnion.map(tarea => {
-                if (tarea.estado === listaId) {
-                    const tarjeta = getTarea(tarea.tarjeta);
-                    return (
-                        <Tarjeta 
-                            key={tarea.tarjeta}
-                            tarea={tarjeta}
-                            assignedTo="asignado"
-                        />
-                    );
-                }
-                return null; // Si la condición no se cumple, no se renderiza nada
-            })}
+                {tareasUnion.map(tarea => {
+                    if (tarea.estado === listaId) {
+                        const tarjeta = getTarea(tarea.tarjeta);
+                        return (
+                            <Tarjeta 
+                                key={tarea.tarjeta}
+                                tarea={tarjeta}
+                                assignedTo="asignado"
+                                onClick={() => abrirDetallesTarjeta(tarjeta)}
+                            />
+                        );
+                    }
+                    return null; // Si la condición no se cumple, no se renderiza nada
+                })}
 
                 {!isListaLlena && (
                     <button
@@ -258,6 +268,17 @@ export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usua
                 </button>
                
             </Modal>
+
+            {/* Modal que se abre al presionar una tarjeta. */}
+            <Modal isOpen={mostrarDetalleTarjeta} onClose={() => setMostrarDetalleTarjeta(false)}>
+                {tarjetaSeleccionada && (
+                    <DetallesTarjeta 
+                        tarjeta={tarjetaSeleccionada} 
+                        onClose={() => setMostrarDetalleTarjeta(false)}
+                    />
+                )}
+            </Modal>
+
         </div>
     )
 }

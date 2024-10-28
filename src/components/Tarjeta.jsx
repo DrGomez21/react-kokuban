@@ -1,7 +1,9 @@
 
-export function Tarjeta({ tarea, assignedTo }) {
+export function Tarjeta({ tarea, assignedTo, onClick }) {
     return (
-        <div className="bg-[#F5FF70] border-[3px] border-[#121212] hover:shadow-[.4rem_.4rem_#121212] hover:cursor-pointer duration-150 p-4 w-full shadow-md relative">
+        <div 
+        className="bg-[#F5FF70] border-[3px] border-[#121212] hover:shadow-[.4rem_.4rem_#121212] hover:cursor-pointer duration-150 p-4 w-full shadow-md relative"
+        onClick={onClick}>
           <h2 className="text-lg montserrat-semibold mb-1">{tarea.nombre_actividad}</h2>
           <p className="text-sm mb-4">{tarea.descripcion}</p>
           <div className="flex flex-wrap gap-2 ">
