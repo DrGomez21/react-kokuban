@@ -52,10 +52,6 @@ export function TableroTareas({token, tablero, usuario}) {
         }
     }
 
-    const handleAgregarTareaALista = () => {
-        // setTasks(prevTasks => prevTasks.filter(pt => pt.estado === listaId))
-    };
-
     // Mediante esta función se podrán agregar listas nuevas al tablero.
     const agregarNuevaLista = handleSubmit (async data => {
         try {
@@ -82,6 +78,10 @@ export function TableroTareas({token, tablero, usuario}) {
         }
     });
 
+    const handleEliminarLista = (listaId) => {
+        setListas(prevListas => prevListas.filter(lista => lista.id !== listaId))
+    }
+
     const eliminarLista = (listaId) => {
         
     };
@@ -107,8 +107,7 @@ export function TableroTareas({token, tablero, usuario}) {
                         allTasks={tarjetas}
                         cant_max={lista.cant_maxima}
                         usuario={usuario}
-                        onAgregarTarea={() => {}}
-                        onEliminarLista={() => eliminarLista(lista.id)}
+                        onEliminarLista={handleEliminarLista}
                         onActualizarTarea={actualizarTarea}
                     />
                 ))}

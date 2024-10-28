@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usuario, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
+export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usuario, onEliminarLista, onActualizarTitulo }) {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarAcciones, setMostrarAcciones] = useState(false);
     const [mostrarEditarTitulo, setMostrarEditarTitulo] = useState(false);
@@ -68,6 +68,24 @@ export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usua
             setMostrarModal(false);
         }
     }
+
+    const handleDelete = async () => {
+        try {
+            const response = await axios.delete(`http://localhost:8000/api/estados/${listaId}/`, {
+                headers: {
+                    Authorization: `Token ${token}`
+                }
+            });
+            if (response.status === 204) { // Estado 204 para "No Content", es decir, eliminado correctamente
+                onEliminarLista(listaId);
+                toast.success("La lista fue eliminada")
+            } else {
+                console.log("No se pudo eliminar la Lista.");
+            }
+        } catch (error) {
+            console.error("Error al eliminar la lista:", error);
+        }
+    };
 
     const isListaLlena = false
     return (
@@ -143,7 +161,7 @@ export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usua
                     </div>
                     <button 
                         onClick={() => {
-                            onEliminarLista();
+                            handleDelete();
                             setMostrarAcciones(false);
                         }} 
                         className="bg-red-500 text-white py-2 px-4 rounded-sm w-full"
