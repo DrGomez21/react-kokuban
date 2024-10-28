@@ -82,14 +82,6 @@ export function TableroTareas({token, tablero, usuario}) {
         setListas(prevListas => prevListas.filter(lista => lista.id !== listaId))
     }
 
-    const eliminarLista = (listaId) => {
-        
-    };
-
-    const actualizarTarea = (tituloLista, tareaActualizada) => {
-        
-    };
-
     useEffect(() => {
         getData()
     }, [])
@@ -108,7 +100,6 @@ export function TableroTareas({token, tablero, usuario}) {
                         cant_max={lista.cant_maxima}
                         usuario={usuario}
                         onEliminarLista={handleEliminarLista}
-                        onActualizarTarea={actualizarTarea}
                     />
                 ))}
 
