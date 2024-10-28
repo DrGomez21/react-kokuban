@@ -5,15 +5,15 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
-export function TableroTareas({token, tablero}) {
+export function TableroTareas({token, tablero, usuario}) {
     
     const [listas, setListas] = useState([]);
     const [tasks, setTasks] = useState([])
     const [tarjetas, setTarjetas] = useState([])
+    const [mostrarModalNuevaLista, setMostrarModalNuevaLista] = useState(false);
 
     const {register, handleSubmit} = useForm()
 
-    const [mostrarModalNuevaLista, setMostrarModalNuevaLista] = useState(false);
 
     const getData = async () => {
         try {
@@ -65,8 +65,6 @@ export function TableroTareas({token, tablero}) {
                 tablero:tablero
             }
 
-            console.log(listaCreada)
-
             const response = await axios.post('http://localhost:8000/api/estados/', listaCreada, {
                 headers: { Authorization: `Token ${token}` }
             })
@@ -107,6 +105,7 @@ export function TableroTareas({token, tablero}) {
                         tareas={tasks}
                         allTasks={tarjetas}
                         cant_max={lista.cant_maxima}
+                        usuario={usuario}
                         onAgregarTarea={(tarea) => agregarTareaALista(lista.id, tarea)}
                         onEliminarLista={() => eliminarLista(lista.id)}
                         onActualizarTarea={actualizarTarea}

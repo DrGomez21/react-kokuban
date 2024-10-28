@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Tarjeta } from "./Tarjeta";
 import { Modal } from "./Modal";
+import { useForm } from 'react-hook-form';
 
-export function Lista({ listaId, titulo, tareas, cant_max, allTasks, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
+export function Lista({ listaId, titulo, tareas, cant_max, allTasks, usuario, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarAcciones, setMostrarAcciones] = useState(false);
     const [mostrarEditarTitulo, setMostrarEditarTitulo] = useState(false);
     const [nuevoTitulo, setNuevoTitulo] = useState(titulo);
     const [maxTarjetas, setMaxTarjetas] = useState(cant_max);
+
+    const {register, handleSubmit} = useForm()
     
     const [nuevaTarea, setNuevaTarea] = useState({
         title: '',
@@ -21,6 +24,27 @@ export function Lista({ listaId, titulo, tareas, cant_max, allTasks, onAgregarTa
     }
     
     const [nuevaEtiqueta, setNuevaEtiqueta] = useState('');
+
+
+    const postNuevaTarea = handleSubmit (async (data) => {
+        try {
+            const tareaCreada = {
+                nombre_actividad:data.nombre,
+                descripcion:data.descripcion,
+                etiqueta:data.etiqueta,
+                fecha_creacion:Date.now(),
+                fecha_vencimiento:Date(data.vencimiento),
+                creador_tarjeta:usuario.id
+            }
+
+            const response = await axios.post('http://localhost:8000/api/estados/', listaCreada, {
+                headers: { Authorization: `Token ${token}` }
+            })
+
+        } catch (error) {
+
+        }
+    })
 
     const agregarTarea = () => {
         if (nuevaTarea.title && nuevaTarea.description && tareas.length < maxTarjetas) {
@@ -177,6 +201,10 @@ export function Lista({ listaId, titulo, tareas, cant_max, allTasks, onAgregarTa
             {/* Modal de Nueva Tarea */}
             <Modal isOpen={mostrarModal} onClose={() => setMostrarModal(false)}>
                 <h3 className="text-lg montserrat-bold mb-4">Agregar Nueva Tarea</h3>
+
+                <form ></form>
+
+
                 <div className="space-y-2">
                     <input
                         type="text"
