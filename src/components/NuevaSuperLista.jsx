@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Tarjeta } from "./Tarjeta";
 import { Modal } from "./Modal";
 
-export function Lista({ titulo, tareas, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
+export function Lista({ titulo, tareas, cant_max, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarAcciones, setMostrarAcciones] = useState(false);
     const [mostrarEditarTitulo, setMostrarEditarTitulo] = useState(false);
@@ -53,7 +53,7 @@ export function Lista({ titulo, tareas, onAgregarTarea, onEliminarLista, onActua
     const isListaLlena = tareas.length >= maxTarjetas;
 
     return (
-        <div className={`bg-white shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-80 ${isListaLlena ? 'border-red-500' : ''}`}>
+        <div className={`bg-white min-w-64 shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-80 ${isListaLlena ? 'border-red-500' : ''}`}>
             {isListaLlena && (
                 <span className="block w-full text-center text-red-500 font-bold mb-2">
                     Lleno

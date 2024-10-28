@@ -12,11 +12,9 @@ export function KanbanPage() {
     const token = location.state?.token || "" // Obtener el token como cadena de texto
     const usuario = location.state?.user
     const espacio = location.state?.espacio
+    const tablero = location.state?.tab
 
     const [loading, setLoading] = useState(true)
-
-    console.log(usuario)
-    console.log(token)
 
     return (
 
@@ -25,7 +23,7 @@ export function KanbanPage() {
             <Header user={usuario} nombreEspacio={espacio.nombre} />
 
             <div className="justify-start">
-                <TableroTareas />
+                <TableroTareas token={token} tablero={tablero.id} />
             </div>
 
         </div>
