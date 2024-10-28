@@ -2,85 +2,73 @@ import React, { useState } from 'react';
 import { Tarjeta } from "./Tarjeta";
 import { Modal } from "./Modal";
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
-export function Lista({ listaId, titulo, tareas, cant_max, allTasks, usuario, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
+export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usuario, onAgregarTarea, onEliminarLista, onActualizarTitulo }) {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarAcciones, setMostrarAcciones] = useState(false);
     const [mostrarEditarTitulo, setMostrarEditarTitulo] = useState(false);
     const [nuevoTitulo, setNuevoTitulo] = useState(titulo);
     const [maxTarjetas, setMaxTarjetas] = useState(cant_max);
 
+    const [tareasUnion, setTareasUnion] = useState(tareas) // Esta es la union.
+    const [tarjetero, setTarjetero] = useState(allTasks)    // Acá están todas las tareas.
+
     const {register, handleSubmit} = useForm()
     
-    const [nuevaTarea, setNuevaTarea] = useState({
-        title: '',
-        description: '',
-        tags: [],
-        assignedTo: ''
-    });
-
     const getTarea = (idTarea) => {
-        return allTasks.find(t => t['id'] == idTarea)
+        return tarjetero.find(t => t['id'] == idTarea)
     }
-    
-    const [nuevaEtiqueta, setNuevaEtiqueta] = useState('');
-
 
     const postNuevaTarea = handleSubmit (async (data) => {
         try {
             const tareaCreada = {
-                nombre_actividad:data.nombre,
+                nombre_actividad:data.nombre_actividad,
                 descripcion:data.descripcion,
                 etiqueta:data.etiqueta,
                 fecha_creacion:Date.now(),
-                fecha_vencimiento:Date(data.vencimiento),
+                fecha_vencimiento: new Date().toISOString(),
                 creador_tarjeta:usuario.id
             }
 
-            const response = await axios.post('http://localhost:8000/api/estados/', listaCreada, {
+            const response = await axios.post('http://localhost:8000/api/tarjetas/', tareaCreada, {
                 headers: { Authorization: `Token ${token}` }
             })
 
-        } catch (error) {
+            await insertarUnion(response.data)
 
+            console.log(response.data)
+
+        } catch (error) {
+            console.log(error)
         }
     })
 
-    const agregarTarea = () => {
-        if (nuevaTarea.title && nuevaTarea.description && tareas.length < maxTarjetas) {
-            onAgregarTarea({ ...nuevaTarea, id: Date.now() });
-            setNuevaTarea({ title: '', description: '', tags: [], assignedTo: '' });
+    const insertarUnion = async (tarjetaNueva) => {
+
+        try {
+            const unionObj = {
+                estado:listaId,
+                tarjeta:tarjetaNueva.id,
+                fecha_inicio_estado:tarjetaNueva.fecha_creacion
+            }
+    
+            const union = await axios.post('http://localhost:8000/api/estadoTarjetas/', unionObj, {headers: { Authorization: `Token ${token}` }})
+            if (union.status === 201) {
+                toast.success('Tenemos una nueva tarjeta ✨')
+                console.log(union.data)
+                setTareasUnion(prevTareasUnion => [...prevTareasUnion, union.data])
+                setTarjetero(prevTarjetero => [... prevTarjetero, tarjetaNueva])
+            }
+            setMostrarModal(false);
+
+        } catch (error) {
+            console.log(error)
             setMostrarModal(false);
         }
-    };
+    }
 
-    const descartarTarea = () => {
-        setNuevaTarea({ title: '', description: '', tags: [], assignedTo: '' });
-        setMostrarModal(false);
-    };
-
-    const agregarEtiqueta = () => {
-        if (nuevaEtiqueta && !nuevaTarea.tags.includes(nuevaEtiqueta)) {
-            setNuevaTarea({...nuevaTarea, tags: [...nuevaTarea.tags, nuevaEtiqueta]});
-            setNuevaEtiqueta('');
-        }
-    };
-
-    const eliminarEtiqueta = (tagToRemove) => {
-        setNuevaTarea({
-            ...nuevaTarea, 
-            tags: nuevaTarea.tags.filter(tag => tag !== tagToRemove)
-        });
-    };
-
-    const guardarNuevoTitulo = () => {
-        if (nuevoTitulo.trim()) {
-            onActualizarTitulo(titulo, nuevoTitulo.trim());
-            setMostrarEditarTitulo(false);
-        }
-    };
-
-    // const isListaLlena = tareas.length >= maxTarjetas;
     const isListaLlena = false
     return (
         <div className={`bg-white min-w-64 shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-80 ${isListaLlena ? 'border-red-500' : ''}`}>
@@ -102,15 +90,13 @@ export function Lista({ listaId, titulo, tareas, cant_max, allTasks, usuario, on
             
             <div className="space-y-4">
                 
-            {tareas.map(tarea => {
+            {tareasUnion.map(tarea => {
                 if (tarea.estado === listaId) {
                     const tarjeta = getTarea(tarea.tarjeta);
                     return (
                         <Tarjeta 
                             key={tarea.tarjeta}
-                            title={tarjeta.nombre_actividad}
-                            description={tarjeta.descripcion}
-                            tags={tarjeta.etiqueta}
+                            tarea={tarjeta}
                             assignedTo="asignado"
                         />
                     );
@@ -120,7 +106,10 @@ export function Lista({ listaId, titulo, tareas, cant_max, allTasks, usuario, on
 
                 {!isListaLlena && (
                     <button
-                        onClick={() => setMostrarModal(true)}
+                        onClick={() => 
+                            setMostrarModal(true)
+
+                        }
                         className="bg-[#FFE500] shadow-[.2rem_.2rem_#121212] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
                         type="submit"
                     >
@@ -190,7 +179,7 @@ export function Lista({ listaId, titulo, tareas, cant_max, allTasks, usuario, on
                         Cancelar
                     </button>
                     <button 
-                        onClick={guardarNuevoTitulo}
+                        onClick={() => {}}
                         className="bg-[#9eb0ff] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none"
                     >
                         Guardar
@@ -200,63 +189,56 @@ export function Lista({ listaId, titulo, tareas, cant_max, allTasks, usuario, on
 
             {/* Modal de Nueva Tarea */}
             <Modal isOpen={mostrarModal} onClose={() => setMostrarModal(false)}>
+
                 <h3 className="text-lg montserrat-bold mb-4">Agregar Nueva Tarea</h3>
 
-                <form ></form>
-
-
-                <div className="space-y-2">
-                    <input
-                        type="text"
-                        placeholder="Título"
-                        value={nuevaTarea.title}
-                        onChange={(e) => setNuevaTarea({...nuevaTarea, title: e.target.value})}
-                        className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <textarea
-                        placeholder="Descripción"
-                        value={nuevaTarea.description}
-                        onChange={(e) => setNuevaTarea({...nuevaTarea, description: e.target.value})}
-                        className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Asignado a"
-                        value={nuevaTarea.assignedTo}
-                        onChange={(e) => setNuevaTarea({...nuevaTarea, assignedTo: e.target.value})}
-                        className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <div className="flex space-x-2">
+                <form onSubmit={postNuevaTarea}>
+                    <div className="space-y-2">
+                        <input
+                            type="text"
+                            placeholder="Título"
+                            id='nombre_actividad'
+                            className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            {...register("nombre_actividad", {required: true}) }
+                        />
+                        <textarea
+                            placeholder="Descripción"
+                            id='descripcion'
+                            className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            {...register("descripcion", {required: true}) }
+                        />
+                        <input
+                            type="text"
+                            placeholder="Asignado a"
+                            id='asignado'
+                            className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            {...register("asignado", {required: true}) }
+                        />
                         <input
                             type="text"
                             placeholder="Nueva etiqueta"
-                            value={nuevaEtiqueta}
-                            onChange={(e) => setNuevaEtiqueta(e.target.value)}
+                            id='etiqueta'
                             className="flex-grow p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            {...register("etiqueta", {required: true}) }
                         />
-                        <button onClick={agregarEtiqueta} className="bg-[#B2FF9E] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none">
-                            Agregar
-                        </button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                        {nuevaTarea.tags.map((tag, index) => (
-                            <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center">
-                                {tag}
-                                <button onClick={() => eliminarEtiqueta(tag)} className="ml-2 text-red-500 font-bold">
-                                    &times;
-                                </button>
-                            </span>
-                        ))}
-                    </div>
-                    <div className="flex justify-between mt-4">
-                        <button onClick={descartarTarea} className="bg-[#ff9292] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none">
-                            Descartar
-                        </button>
-                        <button onClick={agregarTarea} className="bg-[#9eb0ff] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none">
+                        
+                        
+                        <button 
+                            type="submit" 
+                            className="items-center bg-[#9eb0ff] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none"
+                        >
                             Guardar Tarea
                         </button>
                     </div>
-                </div>
+                </form>
+                
+                <button 
+                    onClick={() => setMostrarModal(false)} 
+                    className="mt-4 bg-[#ff9292] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none"
+                >
+                        Descartar
+                </button>
+               
             </Modal>
         </div>
     )

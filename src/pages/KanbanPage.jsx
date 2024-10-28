@@ -22,7 +22,7 @@ export function KanbanPage() {
             
             <Header user={usuario} nombreEspacio={espacio.nombre} />
 
-            <div className="justify-start">
+            <div className="justify-center mx-12 mt-6">
                 <TableroTareas token={token} tablero={tablero.id} usuario={usuario} />
             </div>
 

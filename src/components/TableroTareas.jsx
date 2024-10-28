@@ -52,8 +52,8 @@ export function TableroTareas({token, tablero, usuario}) {
         }
     }
 
-    const agregarTareaALista = (listaId, nuevaTarea) => {
-        
+    const handleAgregarTareaALista = () => {
+        // setTasks(prevTasks => prevTasks.filter(pt => pt.estado === listaId))
     };
 
     // Mediante esta función se podrán agregar listas nuevas al tablero.
@@ -95,7 +95,7 @@ export function TableroTareas({token, tablero, usuario}) {
     }, [])
 
     return (
-        <div className="h-auto  p-6 mr-6 ml-6 max-w-screen-lg">
+        <div className="h-auto mr-6 ml-6">
             <div className="flex overflow-x-auto overflow-y-hidden gap-6 pb-6">
                 {listas.map(lista => (
                     <Lista
@@ -103,10 +103,11 @@ export function TableroTareas({token, tablero, usuario}) {
                         titulo={lista.nombre}
                         listaId={lista.id}
                         tareas={tasks}
+                        token={token}
                         allTasks={tarjetas}
                         cant_max={lista.cant_maxima}
                         usuario={usuario}
-                        onAgregarTarea={(tarea) => agregarTareaALista(lista.id, tarea)}
+                        onAgregarTarea={() => {}}
                         onEliminarLista={() => eliminarLista(lista.id)}
                         onActualizarTarea={actualizarTarea}
                     />
