@@ -10,6 +10,8 @@ export function TableroTareas({token, tablero, usuario}) {
     const [listas, setListas] = useState([]);
     const [tasks, setTasks] = useState([])
     const [tarjetas, setTarjetas] = useState([])
+    const [activeCard, setActiveCard] = useState(null)
+
     const [mostrarModalNuevaLista, setMostrarModalNuevaLista] = useState(false);
 
     const {register, handleSubmit} = useForm()
@@ -82,6 +84,42 @@ export function TableroTareas({token, tablero, usuario}) {
         setListas(prevListas => prevListas.filter(lista => lista.id !== listaId))
     }
 
+    const getEstadoTarjeta = (cardId) => {
+        const estadoTarjeta = tasks.find(t => t['tarjeta'] === cardId)
+        return estadoTarjeta.id
+    }
+
+    const onDrag = async (estado) => {
+        try {
+            const update = {
+                estado:estado,
+                tarjeta:activeCard,
+                fecha_inicio_estado:new Date().toISOString()
+            }
+
+            const estadoTareaId = getEstadoTarjeta(activeCard)
+
+            const response = await axios.put(`http://127.0.0.1:8000/api/estadoTarjetas/${estadoTareaId}/`,
+                update, {headers: { Authorization: `Token ${token}` }}
+            )
+            
+            setTasks(prevTareas =>
+                prevTareas.map(tarea =>
+                  tarea.id === response.data.id
+                    ? { ...tarea, estado: response.data.estado, fecha_inicio_estado: response.data.fecha_inicio_estado}
+                    : tarea
+                )
+            );
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const onUpdateContent = () => {
+
+    }
+
     useEffect(() => {
         getData()
     }, [])
@@ -100,6 +138,10 @@ export function TableroTareas({token, tablero, usuario}) {
                         cant_max={lista.cant_maxima}
                         usuario={usuario}
                         onEliminarLista={handleEliminarLista}
+                        setActiveCard={setActiveCard}
+                        onDrop={onDrag}
+                        setEstadoTarjetas={setTasks}
+                        setTarjetas={setTarjetas}
                     />
                 ))}
 

@@ -15,14 +15,13 @@ body {
     background-color: #E7E6EF;
 }
 
-section {
-    /*--bg-color: #B2FF9E; BA9BE4*/
+/* section {
     --bg-color: #BA9BE4;
     display: grid;
     place-content: center;
     min-height: 100vh;
     background-color: var(--bg-color);
-}
+} */
 
 .login {
     background-color: white;

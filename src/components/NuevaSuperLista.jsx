@@ -5,16 +5,19 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { DetallesTarjeta } from "../components/DetallesTarjeta";
+import { DropArea } from './DropArea';
 
-export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usuario, onEliminarLista, onActualizarTitulo }) {
+export function Lista({ 
+        listaId, token, titulo, tareas, cant_max, 
+        allTasks, usuario, onEliminarLista, onActualizarTitulo, setActiveCard,
+        onDrop, setEstadoTarjetas, setTarjetas
+    }) {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarAcciones, setMostrarAcciones] = useState(false);
     const [mostrarEditarTitulo, setMostrarEditarTitulo] = useState(false);
     
     const [nuevoTitulo, setNuevoTitulo] = useState(titulo);
     const [maxTarjetas, setMaxTarjetas] = useState(cant_max);
-    const [tareasUnion, setTareasUnion] = useState(tareas) // Esta es la union.
-    const [tarjetero, setTarjetero] = useState(allTasks)    // Acá están todas las tareas.
 
     const [mostrarDetalleTarjeta, setMostrarDetalleTarjeta] = useState(false)
     const [tarjetaSeleccionada, setTarjetaSeleccionada] = useState(null);
@@ -22,7 +25,7 @@ export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usua
     const {register, handleSubmit} = useForm()
     
     const getTarea = (idTarea) => {
-        return tarjetero.find(t => t['id'] == idTarea)
+        return allTasks.find(t => t['id'] === idTarea)
     }
 
     const postNuevaTarea = handleSubmit (async (data) => {
@@ -62,8 +65,8 @@ export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usua
             if (union.status === 201) {
                 toast.success('Tenemos una nueva tarjeta ✨')
                 console.log(union.data)
-                setTareasUnion(prevTareasUnion => [...prevTareasUnion, union.data])
-                setTarjetero(prevTarjetero => [... prevTarjetero, tarjetaNueva])
+                setEstadoTarjetas(prevTareas => [...prevTareas, union.data])
+                setTarjetas(prevTarjetero => [... prevTarjetero, tarjetaNueva])
             }
             setMostrarModal(false);
 
@@ -115,23 +118,29 @@ export function Lista({ listaId, token, titulo, tareas, cant_max, allTasks, usua
                 </button>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-2">
                 
-                {tareasUnion.map(tarea => {
+                {tareas.map(tarea => {
+                    const tarjeta = getTarea(tarea.tarjeta);
                     if (tarea.estado === listaId) {
-                        const tarjeta = getTarea(tarea.tarjeta);
                         return (
-                            <Tarjeta 
-                                key={tarea.tarjeta}
-                                tarea={tarjeta}
-                                assignedTo="asignado"
-                                onClick={() => abrirDetallesTarjeta(tarjeta)}
-                            />
+                            <React.Fragment key={tarjeta.id}>
+                                <Tarjeta 
+                                    key={Date.now()}
+                                    tarea={tarjeta}
+                                    assignedTo="asignado"
+                                    onClick={() => abrirDetallesTarjeta(tarjeta)}
+                                    setActiveCard={setActiveCard}
+                                />
+                                <DropArea onDrop={() => onDrop(listaId)}/>
+                            </React.Fragment>
+                            
                         );
                     }
                     return null; // Si la condición no se cumple, no se renderiza nada
                 })}
-
+                
+                <DropArea onDrop={() => onDrop(listaId)}/>
                 {!isListaLlena && (
                     <button
                         onClick={() => 
