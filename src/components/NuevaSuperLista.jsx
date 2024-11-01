@@ -99,7 +99,6 @@ export function Lista({
         setMostrarDetalleTarjeta(true);
     };
 
-
     const isListaLlena = false
     return (
         <div className={`bg-white h-auto min-w-64 shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-80 ${isListaLlena ? 'border-red-500' : ''}`}>
