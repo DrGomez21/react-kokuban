@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { EspacioItem } from "../components/EspacioItem";
 import { Modal } from "../components/Modal";
+import { Cargando } from "../components/Cargando";
 
 export function EspaciosPage() {
 
@@ -105,7 +106,11 @@ export function EspaciosPage() {
         getUserData()
     }, [])
     
-    if (loading) return <p>Cargando datos...</p>
+    if (loading) return (
+        <div>
+            <Cargando />
+        </div>
+    ) 
 
     return (
         <div className="bg-[#E7E6EF] h-screen">
