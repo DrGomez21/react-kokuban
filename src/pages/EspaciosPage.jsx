@@ -108,7 +108,7 @@ export function EspaciosPage() {
     
     if (loading) return (
         <div>
-            <Cargando />
+            Cargando...
         </div>
     ) 
 
