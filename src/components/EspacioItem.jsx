@@ -46,17 +46,28 @@ export function EspacioItem({ espacio, token, usuario, onDelete }) {
 
 
             <Modal isOpen={mostrarModalEliminar} onClose={() => setMostrarModalEliminar(false)}>
-                <h3 className="montserrat-semibold">Acciones</h3>
-                <button
-                    onClick={() => {
-                        handleDelete()
-                        setMostrarModalEliminar(false)
-                    }} 
-                    className="bg-[#ff8686] mt-4 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full">
-                        Eliminar espacio
-                </button>
+                
+                <div className="px-5 py-3">
+                    <h3 className="montserrat-semibold">Acciones</h3>
+                    <button
+                        onClick={() => {
+                            handleDelete()
+                            setMostrarModalEliminar(false)
+                        }} 
+                        className="bg-[#ff8686] mt-4 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full">
+                            Eliminar espacio
+                    </button>
 
-                <button onClick={() => setMostrarModalEliminar(false)} className="mt-2 bg-gray-200 p-2 rounded">X</button>
+                    <div className="w-full text-end">
+                        <button 
+                            onClick={() => setMostrarModalEliminar(false)} 
+                            className="mt-2 bg-indigo-500 border-[#121212] border p-1 w-8 h-8"
+                        >
+                            X
+                        </button>
+                    </div>
+                </div>
+                
             </Modal>
 
         </div>

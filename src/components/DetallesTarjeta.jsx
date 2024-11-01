@@ -1,15 +1,28 @@
 import React, {useState} from 'react';
 
 export function DetallesTarjeta({ tarjeta, onClose }) {
+  
   const [nuevaTarea, setNuevaTarea] = useState('');
   const [tareas, setTareas] = useState(tarjeta.tasks || []);
+  
+  const getUserName = async (userId) => {
+    try {
+        const response = await axios.get(`http://localhost:8000/api/users/${userId}/`, {
+            headers: { Authorization: `Token ${token}` }
+        })
+
+        return response.data.username
+    } catch (error) {
+        return ""
+    }
+  }
 
   return (
-    <div className="bg-[#F5FF70] p-4 w-full">
-      <h2 className="text-xl justify-self-start montserrat-bold mb-4">{tarjeta.nombre_actividad}</h2>
+    <div className="bg-[#F5FF70] p-5 w-full">
+      <h2 className="text-xl justify-self-start montserrat-bold mt-3 mb-1">{tarjeta.nombre_actividad}</h2>
       
       <div className="mb-4">
-            <span className="bg-[#4F1DDE] text-white border border-[#121212] px-2 py-1 rounded-sm text-xs montserrat-regular">
+            <span className="bg-[#956fff] text-white border border-[#121212] px-2 py-1 rounded-sm text-xs montserrat-regular">
               {tarjeta.etiqueta}
             </span>
       </div>
@@ -53,11 +66,12 @@ export function DetallesTarjeta({ tarjeta, onClose }) {
         </div>
       </div>
        */}
+      
       <h3 className='justify-self-start mb-4 montserrat-semibold'>Detalles</h3>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212] mb-2">
-            Creador: Diego {tarjeta.creador_tarjeta}
+          Creador: Creador
           </div>
           <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212]">
             Asignado a: Asignado

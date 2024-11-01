@@ -99,9 +99,10 @@ export function Lista({
         setMostrarDetalleTarjeta(true);
     };
 
+
     const isListaLlena = false
     return (
-        <div className={`bg-white min-w-64 shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-80 ${isListaLlena ? 'border-red-500' : ''}`}>
+        <div className={`bg-white h-auto min-w-64 shadow-[.5rem_.5rem_#121212] border-4 border-[#121212] p-4 w-80 ${isListaLlena ? 'border-red-500' : ''}`}>
             
             {isListaLlena && (
                 <span className="block w-full text-center text-red-500 font-bold mb-2">
@@ -226,55 +227,57 @@ export function Lista({
 
             {/* Modal de Nueva Tarea */}
             <Modal isOpen={mostrarModal} onClose={() => setMostrarModal(false)}>
+                <div className='p-5 mt-3'>
+                    <h3 className="text-lg montserrat-bold mb-4">Agregar Nueva Tarea</h3>
 
-                <h3 className="text-lg montserrat-bold mb-4">Agregar Nueva Tarea</h3>
-
-                <form onSubmit={postNuevaTarea}>
-                    <div className="space-y-2">
-                        <input
-                            type="text"
-                            placeholder="Título"
-                            id='nombre_actividad'
-                            className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            {...register("nombre_actividad", {required: true}) }
-                        />
-                        <textarea
-                            placeholder="Descripción"
-                            id='descripcion'
-                            className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            {...register("descripcion", {required: true}) }
-                        />
-                        <input
-                            type="text"
-                            placeholder="Asignado a"
-                            id='asignado'
-                            className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            {...register("asignado", {required: true}) }
-                        />
-                        <input
-                            type="text"
-                            placeholder="Nueva etiqueta"
-                            id='etiqueta'
-                            className="flex-grow p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            {...register("etiqueta", {required: true}) }
-                        />
-                        
-                        
-                        <button 
-                            type="submit" 
-                            className="items-center bg-[#9eb0ff] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none"
-                        >
-                            Guardar Tarea
-                        </button>
-                    </div>
-                </form>
+                    <form onSubmit={postNuevaTarea}>
+                        <div className="space-y-2">
+                            <input
+                                type="text"
+                                placeholder="Título"
+                                id='nombre_actividad'
+                                className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                {...register("nombre_actividad", {required: true}) }
+                            />
+                            <textarea
+                                placeholder="Descripción"
+                                id='descripcion'
+                                className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                {...register("descripcion", {required: true}) }
+                            />
+                            <input
+                                type="text"
+                                placeholder="Asignado a"
+                                id='asignado'
+                                className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                {...register("asignado", {required: true}) }
+                            />
+                            <input
+                                type="text"
+                                placeholder="Nueva etiqueta"
+                                id='etiqueta'
+                                className="flex-grow p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                {...register("etiqueta", {required: true}) }
+                            />
+                            
+                            
+                            <button 
+                                type="submit" 
+                                className="items-center bg-[#9eb0ff] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none"
+                            >
+                                Guardar Tarea
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <button 
+                        onClick={() => setMostrarModal(false)} 
+                        className="mt-4 bg-[#ff9292] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none"
+                    >
+                            Descartar
+                    </button>
+                </div>
                 
-                <button 
-                    onClick={() => setMostrarModal(false)} 
-                    className="mt-4 bg-[#ff9292] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none"
-                >
-                        Descartar
-                </button>
                
             </Modal>
 
@@ -282,7 +285,7 @@ export function Lista({
             <Modal isOpen={mostrarDetalleTarjeta} onClose={() => setMostrarDetalleTarjeta(false)}>
                 {tarjetaSeleccionada && (
                     <DetallesTarjeta 
-                        tarjeta={tarjetaSeleccionada} 
+                        tarjeta={tarjetaSeleccionada}
                         onClose={() => setMostrarDetalleTarjeta(false)}
                     />
                 )}
