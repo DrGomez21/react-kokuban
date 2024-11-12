@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Modal } from "./Modal"
 import axios from "axios";
 
-export function EspacioItem({ espacio, token, usuario, onDelete }) {
+export function EspacioItem({ espacio, token, usuario, onDelete, mostrarOpciones }) {
 
     const navigate = useNavigate()
 
@@ -35,11 +35,11 @@ export function EspacioItem({ espacio, token, usuario, onDelete }) {
             <div 
             onClick={irAlTablero}
             className="py-4 w-full h-full">
-                <h3 className="ml-4 montserrat-semibold">{espacio.nombre}</h3>
+                <h3 className="pl-2 montserrat-semibold">{espacio.nombre}</h3>
             </div>
 
             <button 
-                className="w-8 h-8 mr-4 bg-slate-300 rounded hover:bg-slate-200 flex items-center justify-center"
+                className={`${mostrarOpciones ? 'w-8 h-8 mr-4 bg-slate-300 rounded hover:bg-slate-200 flex items-center justify-center' : 'invisible' }`}
                 onClick={() => setMostrarModalEliminar(true)}>
                     <span className="text-lg">⋮</span>
             </button>
