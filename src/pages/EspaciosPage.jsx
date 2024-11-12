@@ -104,27 +104,12 @@ export function EspaciosPage() {
             if (response.status === 201) {
                 
                 if (data.selectedOption) {
-                    
-                    const userEspacioCreado = {
-                        espacio:response.data.id,
-                        fecha_fin_asignacion:null,
-                        fecha_inicio_asignacion: new Date().toISOString(),
-                        usuario:parseInt(data.selectedOption)
-                    }
-
-                    console.log(userEspacioCreado)
-                    
-                    const conn = await axios.post('http://localhost:8000/api/usuarioEspacios/', userEspacioCreado, { headers: { Authorization: `Token ${token}` } })
-                    
-                    if (conn.status === 201) {
-                        toast.success('Pudimos crear el espacio. Yey :D')
-                    }
+                    await compartirEspacio(response.data.id, data.selectedOption)
                 }
-
                 setMostrarModalNuevoEstado(false)
-                
                 // Actualizar la UI.
                 setEspacios(prevEspacios => [...prevEspacios, response.data]);
+                toast.success('Nuevo espacio creado 🚀')
             } else {
                 console.log(response)
             }
@@ -132,6 +117,21 @@ export function EspaciosPage() {
             console.log(error)
         }
     })
+
+    const compartirEspacio = async (idEspacio, idUsuarioCompartido) => {
+        const userEspacioCreado = {
+            espacio:idEspacio,
+            fecha_fin_asignacion:null,
+            fecha_inicio_asignacion: new Date().toISOString(),
+            usuario:parseInt(idUsuarioCompartido)
+        }
+        
+        const conn = await axios.post('http://localhost:8000/api/usuarioEspacios/', userEspacioCreado, { headers: { Authorization: `Token ${token}` } })
+        
+        if (conn.status === 201) {
+            toast.success('Espacio compartido 🔗')
+        }
+    }
 
     // Función para actualizar el estado al eliminar un espacio
     const handleDeleteEspacio = (espacioId) => {
@@ -197,54 +197,57 @@ export function EspaciosPage() {
 
 
             <Modal isOpen={mostrarModalNuevoEspacio} onClose={() => setMostrarModalNuevoEstado(false)}>
-                <h3 className="text-lg montserrat-semibold mb-4">Crear espacio</h3>
-                <form onSubmit={crearEspacio} className="mt-4">
-                    <div className="mb-2">
-                        <label className="block text-[#121212] text-sm mb-2 montserrat-semibold" htmlFor="nombre">
-                        Nombre del espacio
-                        </label>
-                        <input
-                        className="shadow-[.2rem_.2rem_#121212] hover:shadow-[.4rem_.4rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="nombre"
-                        type="text"
-                        placeholder="Nombre del espacio"
-                        {...register ("nombre", {required:true})}
-                        />
-                    </div>
+                <div className="px-4 my-3">
+                    <h3 className="text-lg montserrat-semibold mb-4">Crear espacio</h3>
+                    <form onSubmit={crearEspacio} className="mt-4">
+                        <div className="mb-2">
+                            <label className="block text-[#121212] text-sm mb-2 montserrat-semibold" htmlFor="nombre">
+                            Nombre del espacio
+                            </label>
+                            <input
+                            className="shadow-[.2rem_.2rem_#121212] hover:shadow-[.4rem_.4rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="nombre"
+                            type="text"
+                            placeholder="Nombre del espacio"
+                            {...register ("nombre", {required:true})}
+                            />
+                        </div>
 
-                    <div className="mb-2">
-                        <label htmlFor="option" className="montserrat-medium text-xs mr-4">Compartir con:</label>
-                        <select 
-                            id="option"
-                            className="px-2 py-1 bg-white border border-[#121212] hover:cursor-pointer"
-                            {...register("selectedOption")}
-                        >
-                            <option value="">Usuario...</option>
-                            {
-                                allUsers.map((user) => (
-                                    <option key={user.id} value={user.id}>{user.username}</option>
-                                ))
-                            }
+                        <div className="mb-2 py-2">
+                            <label htmlFor="option" className="montserrat-medium text-xs mr-4">Compartir con:</label>
+                            <select 
+                                id="option"
+                                className="px-2 py-1 bg-white border border-[#121212] hover:cursor-pointer"
+                                {...register("selectedOption")}
+                            >
+                                <option className="montserrat-regular" value="">Nadie...</option>
+                                {
+                                    allUsers.map((user) => (
+                                        <option className="montserrat-regular" key={user.id} value={user.id}>{user.username}</option>
+                                    ))
+                                }
 
-                        </select>
-                    </div>
+                            </select>
+                        </div>
 
-                    <div className="flex items-center justify-between">
-                        <button
-                            className="bg-[#B2FF9E] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
-                            type="submit"
-                        >
-                            Crear ahora
-                        </button>
-                    </div>
-                </form>
+                        <div className="flex items-center justify-between">
+                            <button
+                                className="bg-[#B2FF9E] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
+                                type="submit"
+                            >
+                                Crear ahora
+                            </button>
+                        </div>
+                    </form>
 
-                <button
-                    className="bg-[#ff8686] mt-4 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
-                    onClick={() => setMostrarModalNuevoEstado(false)}
-                >
-                    Cancelar
-                </button>
+                    <button
+                        className="bg-[#ff8686] mt-4 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
+                        onClick={() => setMostrarModalNuevoEstado(false)}
+                    >
+                        Cancelar
+                    </button>
+
+                </div>
             </Modal>
 
         </div>
