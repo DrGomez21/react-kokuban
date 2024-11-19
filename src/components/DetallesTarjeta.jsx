@@ -1,77 +1,91 @@
-import React, {useState} from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
-export function DetallesTarjeta({ tarjeta, onClose }) {
-  
-  const [nuevaTarea, setNuevaTarea] = useState('');
-  const [tareas, setTareas] = useState(tarjeta.tasks || []);
-  
+export function DetallesTarjeta({ tarjeta, onClose, listaSubtareas, onInsert }) {
+
+  const [tareas, setTareas] = useState([]);
+
+  const { register, handleSubmit } = useForm()
+
   const getUserName = async (userId) => {
     try {
-        const response = await axios.get(`http://localhost:8000/api/users/${userId}/`, {
-            headers: { Authorization: `Token ${token}` }
-        })
+      const response = await axios.get(`http://localhost:8000/api/users/${userId}/`, {
+        headers: { Authorization: `Token ${token}` }
+      })
 
-        return response.data.username
+      return response.data.username
     } catch (error) {
-        return ""
+      return ""
     }
   }
+
+  const recibirDatos = handleSubmit((data) => {
+    onInsert(data.descripcion, data.vencimiento)
+  })
 
   return (
     <div className="bg-[#F5FF70] p-5 w-full">
       <h2 className="text-xl justify-self-start montserrat-bold mt-3 mb-1">{tarjeta.nombre_actividad}</h2>
-      
+
       <div className="mb-4">
-            <span className="bg-[#956fff] text-white border border-[#121212] px-2 py-1 rounded-sm text-xs montserrat-regular">
-              {tarjeta.etiqueta}
-            </span>
+        <span className="bg-[#956fff] text-white border border-[#121212] px-2 py-1 rounded-sm text-xs montserrat-regular">
+          {tarjeta.etiqueta}
+        </span>
       </div>
-      
+
       <div className="mb-4">
         <h3 className="montserrat-semibold justify-self-start mb-2">Descripción</h3>
         <p className="bg-white shadow-[.2rem_.2rem_#121212] border-2 text-left border-[#121212] p-2 max-w-sm">
           {tarjeta.descripcion}
         </p>
       </div>
-{/*       
+
       <div className="mb-4">
-        <h3 className="font-semibold mb-2">Task</h3>
+        <h3 className="font-semibold mb-2">Subtareas</h3>
         <div className="space-y-2">
-          {tareas.map((tarea, index) => (
+          {listaSubtareas.map((tarea, index) => (
             <div key={index} className="flex items-center bg-white p-2 rounded">
-              <input 
-                type="checkbox" 
-                checked={tarea.completed} 
-                onChange={() => toggleTarea(index)}
-                className="mr-2" 
+              <input
+                type="checkbox"
+                checked={tarea.estado_subtarea}
+                className="mr-2"
               />
-              <span>{tarea.text}</span>
+              <span>{tarea.descripcion}</span>
             </div>
           ))}
-        </div>
-        <div className="mt-2 flex">
-          <input
-            type="text"
-            value={nuevaTarea}
-            onChange={(e) => setNuevaTarea(e.target.value)}
-            placeholder="Nueva tarea"
-            className="flex-grow p-2 rounded-l"
-          />
-          <button 
-            onClick={agregarTarea}
-            className="bg-green-500 text-white px-3 py-2 rounded-r hover:bg-green-600"
-          >
-            Agregar tarea
-          </button>
+
+          <form className='flex-col gap-2 p-1 bg-yellow-200' onSubmit={recibirDatos}>
+            <input
+              type="text"
+              placeholder="Descripción subtarea"
+              id='descripcion'
+              className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              {...register("descripcion", { required: true })}
+            />
+
+            <div className='flex w-full mt-2 justify-between'>
+              <input
+                type="date"
+                name="vencimiento"
+                id="vencimiento"
+                {...register("vencimiento", { required: true })}
+              />
+
+              <button className='bg-green-300 px-2 py-1 border-2 montserrat-semibold border-[#121212]'>
+                Save
+              </button>
+            </div>
+          </form>
+
         </div>
       </div>
-       */}
-      
+
       <h3 className='justify-self-start mb-4 montserrat-semibold'>Detalles</h3>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212] mb-2">
-          Creador: Creador
+            Creador: Creador
           </div>
           <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212]">
             Asignado a: Asignado
@@ -87,8 +101,8 @@ export function DetallesTarjeta({ tarjeta, onClose }) {
           </div>
         </div>
       </div>
-      
-      <button 
+
+      <button
         className="mt-6 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
         onClick={onClose}
       >
