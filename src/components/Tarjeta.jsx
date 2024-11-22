@@ -1,5 +1,7 @@
 
 export function Tarjeta({ tarea, assignedTo, onClick, setActiveCard }) {
+
+
   return (
 
     // TODO: COLOCAR LA CONDICIÓN DE COLOR POR FECHA DE VENCIMIENTO
