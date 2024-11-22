@@ -129,6 +129,35 @@ export function Lista({
         }
     }
 
+    const marcarSubtareaHecha = async (subtarea) => {
+        subtarea.estado_subtarea = true
+        const response = await axios.put(`http://localhost:8000/api/subtaeras/${subtarea.id}`, subtarea, {
+            headers: { Authorization: `Token ${token}` }
+        })
+    }
+
+    const updateNuevaTarea = async (descripcion, fechaVencimiento) => {
+        try {
+            const subtarea = {
+                descripcion: descripcion,
+                estado_subtarea: false,
+                fecha_vencimiento: new Date(fechaVencimiento).toISOString(),
+                tarjeta: tarjetaSeleccionada.id
+            }
+
+            const response = await axios.post('http://localhost:8000/api/subtareas/', subtarea, {
+                headers: { Authorization: `Token ${token}` }
+            })
+
+            if (response.status === 201) {
+                toast.success('Tenemos una nueva subtarea ✨')
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const actrualizarCantMaxima = handleSubmit((data) => {
         console.log(data.cantidadMaxima)
     })
@@ -378,6 +407,7 @@ export function Lista({
                         onClose={() => setMostrarDetalleTarjeta(false)}
                         listaSubtareas={subtareas}
                         onInsert={postNuevaSubtarea}
+                        token={token}
                     />
                 )}
             </Modal>

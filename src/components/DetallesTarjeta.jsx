@@ -1,28 +1,51 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export function DetallesTarjeta({ tarjeta, onClose, listaSubtareas, onInsert }) {
+export function DetallesTarjeta({ tarjeta, onClose, listaSubtareas, onInsert, token }) {
 
-  const [tareas, setTareas] = useState([]);
+  const [tareas, setTareas] = useState(listaSubtareas);
+  const [username, setUsername] = useState("")
 
   const { register, handleSubmit } = useForm()
 
-  const getUserName = async (userId) => {
+  const getUserName = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/users/${userId}/`, {
+      const response = await axios.get(`http://localhost:8000/api/users/${tarjeta.creador_tarjeta}/`, {
         headers: { Authorization: `Token ${token}` }
       })
 
-      return response.data.username
+      setUsername(response.data.username)
     } catch (error) {
-      return ""
+      console.log(error)
+      setUsername("Anónimo")
     }
   }
 
+  const esProximo = () => {
+    const fechaLimiteObj = new Date(tarjeta.fecha_vencimiento);
+    const fechaActual = new Date();
+    const diferenciaMilisegundos = fechaLimiteObj - fechaActual;
+    const diferenciaDias = Math.ceil(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
+
+    return diferenciaDias <= 2;
+  }
+
   const recibirDatos = handleSubmit((data) => {
+    const subtarea = {
+      descripcion: data.descripcion,
+      estado_subtarea: false,
+      fecha_vencimiento: new Date(data.vencimiento).toISOString(),
+      tarjeta: tarjeta.id
+    }
+    setTareas(prevTareas => [...prevTareas, subtarea])
     onInsert(data.descripcion, data.vencimiento)
   })
+
+  useEffect(() => {
+    getUserName()
+  }, [])
+
 
   return (
     <div className="bg-[#F5FF70] p-5 w-full">
@@ -44,8 +67,8 @@ export function DetallesTarjeta({ tarjeta, onClose, listaSubtareas, onInsert }) 
       <div className="mb-4">
         <h3 className="font-semibold mb-2">Subtareas</h3>
         <div className="space-y-2">
-          {listaSubtareas.map((tarea, index) => (
-            <div key={index} className="flex items-center bg-white p-2 rounded">
+          {tareas.map((tarea, index) => (
+            <div key={index} className={`flex items-center ${esProximo() ? 'bg-red-300' : 'bg-white'} p-2 rounded`}>
               <input
                 type="checkbox"
                 checked={tarea.estado_subtarea}
@@ -85,7 +108,7 @@ export function DetallesTarjeta({ tarjeta, onClose, listaSubtareas, onInsert }) 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212] mb-2">
-            Creador: Creador
+            Creador: {username}
           </div>
           <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212]">
             Asignado a: Asignado
@@ -93,7 +116,6 @@ export function DetallesTarjeta({ tarjeta, onClose, listaSubtareas, onInsert }) 
         </div>
         <div>
           <div className="bg-blue-200 p-2 border border-[#121212] montserrat-medium text-sm rounded-sm mb-2">
-            {/* Desde: {tarjeta.startDate} */}
             From: {tarjeta.fecha_creacion.split('T')[0]}
           </div>
           <div className="bg-red-200 p-2 border border-[#121212] montserrat-medium text-sm rounded-sm">

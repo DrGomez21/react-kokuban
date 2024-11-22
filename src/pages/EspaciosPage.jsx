@@ -22,10 +22,10 @@ export function EspaciosPage() {
 
     const [mostrarModalNuevoEspacio, setMostrarModalNuevoEstado] = useState(false);
 
-    const {register, handleSubmit} = useForm()
-    
+    const { register, handleSubmit } = useForm()
+
     const getAllUsers = async () => {
-        const response = await axios.get('http://localhost:8000/api/users/', {headers: { Authorization: `Token ${token}` }})
+        const response = await axios.get('http://localhost:8000/api/users/', { headers: { Authorization: `Token ${token}` } })
         setAllUsers(response.data)
     }
 
@@ -61,11 +61,11 @@ export function EspaciosPage() {
             const [response, invitado] = await Promise.all([
                 axios.get('http://localhost:8000/api/espacios/', { headers: { Authorization: `Token ${token}` } }),
                 axios.get(`http://localhost:8000/api/usuarioEspacios/`, { headers: { Authorization: `Token ${token}` } })
-            ]) 
+            ])
 
             const espaciosPropios = response.data.filter(espacio => espacio.propietario === userId)
             const espaciosInvitado = invitado.data.filter(espacio => espacio.usuario === userId)
-            
+
             if (espaciosPropios) {
                 setEspacios(espaciosPropios)
             } else {
@@ -91,10 +91,10 @@ export function EspaciosPage() {
     const crearEspacio = handleSubmit(async data => {
         try {
             const espacioCreado = {
-                nombre:data.nombre,
-                propietario:usuario.id
+                nombre: data.nombre,
+                propietario: usuario.id
             }
-            
+
             const response = await axios.post('http://localhost:8000/api/espacios/', espacioCreado, {
                 headers: {
                     Authorization: `Token ${token}`
@@ -102,7 +102,7 @@ export function EspaciosPage() {
             })
 
             if (response.status === 201) {
-                
+
                 if (data.selectedOption) {
                     await compartirEspacio(response.data.id, data.selectedOption)
                 }
@@ -120,14 +120,14 @@ export function EspaciosPage() {
 
     const compartirEspacio = async (idEspacio, idUsuarioCompartido) => {
         const userEspacioCreado = {
-            espacio:idEspacio,
-            fecha_fin_asignacion:null,
+            espacio: idEspacio,
+            fecha_fin_asignacion: null,
             fecha_inicio_asignacion: new Date().toISOString(),
-            usuario:parseInt(idUsuarioCompartido)
+            usuario: parseInt(idUsuarioCompartido)
         }
-        
+
         const conn = await axios.post('http://localhost:8000/api/usuarioEspacios/', userEspacioCreado, { headers: { Authorization: `Token ${token}` } })
-        
+
         if (conn.status === 201) {
             toast.success('Espacio compartido 🔗')
         }
@@ -142,12 +142,12 @@ export function EspaciosPage() {
         getUserData()
         getAllUsers()
     }, [])
-    
+
     if (loading) return (
         <div>
             Cargando...
         </div>
-    ) 
+    )
 
     return (
         <div className="bg-[#E7E6EF] h-screen">
@@ -159,7 +159,7 @@ export function EspaciosPage() {
 
                 <h2 className="montserrat-bold text-xl">Tus espacios</h2>
 
-                <button 
+                <button
                     onClick={() => setMostrarModalNuevoEstado(true)}
                     className="bg-[#B2FF9E] hover:shadow-[.2rem_.2rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none">
                     Crear espacio
@@ -171,13 +171,13 @@ export function EspaciosPage() {
                 <div className="grid grid-cols-3 gap-3 my-3">
                     {
                         espacios.map(espacio => (
-                            <EspacioItem key={espacio.id} espacio={espacio} token={token} usuario={usuario} onDelete={handleDeleteEspacio} mostrarOpciones={true}/>
+                            <EspacioItem key={espacio.id} espacio={espacio} token={token} usuario={usuario} onDelete={handleDeleteEspacio} mostrarOpciones={true} allUsers={allUsers} onShare={compartirEspacio} />
                         ))
                     }
                 </div>
             </div>
 
-            <div className={`px-6 py-6 ${espaciosInvitado.length > 0 ? 'visible' : 'invisible' }`}>
+            <div className={`px-6 py-6 ${espaciosInvitado.length > 0 ? 'visible' : 'invisible'}`}>
                 <h2 className="montserrat-bold text-xl">Espacios a los que estás invitado</h2>
                 {/* Contenedor de espacios */}
                 <div className="py-2 px-2">
@@ -186,9 +186,9 @@ export function EspaciosPage() {
                             espaciosInvitado.map(espacioInvi => {
                                 const espace = getEspacioCompartido(espacioInvi.espacio)
                                 return (
-                                    <EspacioItem key={espacioInvi.id} espacio={espace} token={token} usuario={espace.propietario} onDelete={handleDeleteEspacio} mostrarOpciones={false}/>
+                                    <EspacioItem key={espacioInvi.id} espacio={espace} token={token} usuario={espace.propietario} onDelete={handleDeleteEspacio} mostrarOpciones={false} allUsers={[]} onShare={compartirEspacio} />
                                 )
-                            }) 
+                            })
                         }
                     </div>
                 </div>
@@ -202,20 +202,20 @@ export function EspaciosPage() {
                     <form onSubmit={crearEspacio} className="mt-4">
                         <div className="mb-2">
                             <label className="block text-[#121212] text-sm mb-2 montserrat-semibold" htmlFor="nombre">
-                            Nombre del espacio
+                                Nombre del espacio
                             </label>
                             <input
-                            className="shadow-[.2rem_.2rem_#121212] hover:shadow-[.4rem_.4rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="nombre"
-                            type="text"
-                            placeholder="Nombre del espacio"
-                            {...register ("nombre", {required:true})}
+                                className="shadow-[.2rem_.2rem_#121212] hover:shadow-[.4rem_.4rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="nombre"
+                                type="text"
+                                placeholder="Nombre del espacio"
+                                {...register("nombre", { required: true })}
                             />
                         </div>
 
                         <div className="mb-2 py-2">
                             <label htmlFor="option" className="montserrat-medium text-xs mr-4">Compartir con:</label>
-                            <select 
+                            <select
                                 id="option"
                                 className="px-2 py-1 bg-white border border-[#121212] hover:cursor-pointer"
                                 {...register("selectedOption")}
