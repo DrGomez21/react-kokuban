@@ -1,12 +1,19 @@
 
 export function Tarjeta({ tarea, assignedTo, onClick, setActiveCard }) {
 
+  function porVencer() {
+    const fechaLimiteObj = new Date(tarea.fecha_vencimiento);
+    const fechaActual = new Date();
+    const diferenciaMilisegundos = fechaLimiteObj - fechaActual;
+    const diferenciaDias = Math.ceil(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
+
+    return diferenciaDias <= 0
+  }
 
   return (
 
-    // TODO: COLOCAR LA CONDICIÓN DE COLOR POR FECHA DE VENCIMIENTO
     <div
-      className={`bg-[#F5FF70] border-[3px] border-[#121212] hover:shadow-[.4rem_.4rem_#121212] hover:cursor-pointer duration-150 
+      className={`${porVencer() ? 'bg-red-400' : 'bg-[#F5FF70]'} border-[3px] border-[#121212] hover:shadow-[.4rem_.4rem_#121212] hover:cursor-pointer duration-150 
             p-4 w-full shadow-md relative
             active:opacity-75 active:rounded-lg`}
       onClick={onClick}
