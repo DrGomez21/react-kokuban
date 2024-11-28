@@ -22,6 +22,7 @@ export function Lista({
   onDrop,
   setEstadoTarjetas,
   setTarjetas,
+  onEliminarTarjeta
 }) {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostrarAcciones, setMostrarAcciones] = useState(false);
@@ -157,20 +158,8 @@ export function Lista({
   };
 
   const eliminarTarjeta = async () => {
-    try {
-      const response = await axios.delete(
-        `http://localhost:8000/api/tarjetas/${tarjetaSeleccionada.id}`,
-        {
-          headers: { Authorization: `Token ${token}` },
-        },
-      );
-
-      if (response.status === 204) {
-        toast.success('Eliminada')
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    onEliminarTarjeta(tarjetaSeleccionada.id)
+    setMostrarDetalleTarjeta(false)
   };
 
   const actrualizarCantMaxima = async (data) => {
@@ -555,6 +544,7 @@ export function Lista({
             listaSubtareas={subtareas}
             onInsert={postNuevaSubtarea}
             token={token}
+            onDelete={eliminarTarjeta}
           />
         )}
       </ModalTarjeta>

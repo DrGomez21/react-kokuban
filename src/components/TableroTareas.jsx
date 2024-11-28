@@ -116,8 +116,25 @@ export function TableroTareas({ token, tablero, usuario }) {
         }
     }
 
-    const onUpdateContent = () => {
+    const eliminarTarjeta = async (tarjetaId) => {
+        try {
+            const tarjetaEliminada = tarjetaId
 
+            const response = await axios.delete(
+                `http://localhost:8000/api/tarjetas/${tarjetaId}/`,
+                {
+                    headers: { Authorization: `Token ${token}` },
+                },
+            );
+
+            if (response.status === 204) {
+                toast.success('Eliminada')
+                setTasks(prevTasks => prevTasks.filter(task => task.tarjeta !== tarjetaEliminada))
+                setTarjetas(prevTarjetas => prevTarjetas.filter(tarjeta => tarjeta.id !== tarjetaEliminada))
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     useEffect(() => {
@@ -142,6 +159,7 @@ export function TableroTareas({ token, tablero, usuario }) {
                         onDrop={onDrag}
                         setEstadoTarjetas={setTasks}
                         setTarjetas={setTarjetas}
+                        onEliminarTarjeta={eliminarTarjeta}
                     />
                 ))}
 
