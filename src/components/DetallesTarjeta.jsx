@@ -8,9 +8,11 @@ export function DetallesTarjeta({
   listaSubtareas,
   onInsert,
   token,
+  onDelete,
 }) {
   const [tareas, setTareas] = useState(listaSubtareas);
   const [username, setUsername] = useState("");
+  const [desc, setDesc] = useState(tarjeta.descripcion);
 
   const { register, handleSubmit } = useForm();
 
@@ -57,27 +59,52 @@ export function DetallesTarjeta({
   }, []);
 
   return (
-    <div className="bg-[#F5FF70] p-5 w-full">
-      <h2 className="text-xl justify-self-start montserrat-bold mt-3 mb-1">
-        {tarjeta.nombre_actividad}
-      </h2>
+    <div className="bg-[#F5FF70] p-5 w-full columns-2 overflow-auto">
+      <div className="flex flex-col mb-4 h-full">
+        <h2 className="text-2xl justify-self-start montserrat-bold mb-2">
+          {tarjeta.nombre_actividad}
+        </h2>
 
-      <div className="mb-4">
-        <span className="bg-[#956fff] text-white border border-[#121212] px-2 py-1 rounded-sm text-xs montserrat-regular">
+        <span className="bg-[#956fff] w-fit text-white border border-[#121212] px-2 py-1 rounded-sm text-xs montserrat-regular mb-4">
           {tarjeta.etiqueta}
         </span>
-      </div>
 
-      <div className="mb-4">
-        <h3 className="montserrat-semibold justify-self-start mb-2">
-          Descripción
+        <div className="mb-4">
+          <h3 className="montserrat-semibold justify-self-start mb-2">
+            Descripción
+          </h3>
+
+          <textarea
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            className="w-full h-32 bg-white shadow-[.2rem_.2rem_#121212] border-2 text-left border-[#121212] p-2 max-w-sm"
+          ></textarea>
+        </div>
+
+        <h3 className="justify-self-start mb-2 montserrat-semibold">
+          Detalles
         </h3>
-        <p className="bg-white shadow-[.2rem_.2rem_#121212] border-2 text-left border-[#121212] p-2 max-w-sm">
-          {tarjeta.descripcion}
-        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212] mb-2">
+              Creador: {username}
+            </div>
+            <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212]">
+              Asignado a: Asignado
+            </div>
+          </div>
+          <div>
+            <div className="bg-blue-200 p-2 border border-[#121212] montserrat-medium text-sm rounded-sm mb-2">
+              From: {tarjeta.fecha_creacion.split("T")[0]}
+            </div>
+            <div className="bg-red-200 p-2 border border-[#121212] montserrat-medium text-sm rounded-sm">
+              To: {tarjeta.fecha_vencimiento.split("T")[0]}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="mb-4">
+      <div>
         <h3 className="font-semibold mb-2">Subtareas</h3>
         <div className="space-y-2">
           {tareas.map((tarea, index) => (
@@ -85,12 +112,37 @@ export function DetallesTarjeta({
               key={index}
               className={`flex items-center ${esProximo() ? "bg-red-300" : "bg-white"} p-2 rounded`}
             >
-              <input
-                type="checkbox"
-                checked={tarea.estado_subtarea}
-                className="mr-2"
-              />
-              <span>{tarea.descripcion}</span>
+              <label
+                className={`${tarea.estado_subtarea ? "underline" : "no-underline"} montserrat-regular`}
+              >
+                <input
+                  type="checkbox"
+                  className="mr-4"
+                  checked={tarea.estado_subtarea}
+                  onChange={async () => {
+                    const nuevoEstado = !tarea.estado_subtarea;
+
+                    try {
+                      await axios.patch(
+                        `http://localhost:8000/api/subtareas/${tarea.id}/`,
+                        { estado_subtarea: nuevoEstado },
+                        { headers: { Authorization: `Token ${token}` } },
+                      );
+
+                      setTareas((prevTareas) =>
+                        prevTareas.map((t, idx) =>
+                          idx === index
+                            ? { ...t, estado_subtarea: nuevoEstado }
+                            : t,
+                        ),
+                      );
+                    } catch (error) {
+                      console.error("Error actualizando la subtarea", error);
+                    }
+                  }}
+                />
+                {tarea.descripcion}
+              </label>
             </div>
           ))}
 
@@ -115,39 +167,25 @@ export function DetallesTarjeta({
               />
 
               <button className="bg-green-300 px-2 py-1 border-2 montserrat-semibold border-[#121212]">
-                Save
+                +
               </button>
             </div>
           </form>
         </div>
-      </div>
 
-      <h3 className="justify-self-start mb-4 montserrat-semibold">Detalles</h3>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212] mb-2">
-            Creador: {username}
-          </div>
-          <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212]">
-            Asignado a: Asignado
-          </div>
-        </div>
-        <div>
-          <div className="bg-blue-200 p-2 border border-[#121212] montserrat-medium text-sm rounded-sm mb-2">
-            From: {tarjeta.fecha_creacion.split("T")[0]}
-          </div>
-          <div className="bg-red-200 p-2 border border-[#121212] montserrat-medium text-sm rounded-sm">
-            To: {tarjeta.fecha_vencimiento.split("T")[0]}
-          </div>
+        <div className="flex mt-6 justify-between">
+          <button
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            onClick={onClose}
+          >
+            Cerrar
+          </button>
+
+          <button className="" onClick={onDelete}>
+            Eliminar
+          </button>
         </div>
       </div>
-
-      <button
-        className="mt-6 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-        onClick={onClose}
-      >
-        Cerrar
-      </button>
     </div>
   );
 }

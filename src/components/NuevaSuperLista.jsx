@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Tarjeta } from "./Tarjeta";
 import { Modal } from "./Modal";
+import { ModalTarjeta } from "./ModalDetailTarjeta";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -155,39 +156,20 @@ export function Lista({
     }
   };
 
-  const marcarSubtareaHecha = async (subtarea) => {
-    subtarea.estado_subtarea = true;
-    const response = await axios.put(
-      `http://localhost:8000/api/subtaeras/${subtarea.id}`,
-      subtarea,
-      {
-        headers: { Authorization: `Token ${token}` },
-      },
-    );
-  };
-
-  const updateNuevaTarea = async (descripcion, fechaVencimiento) => {
+  const eliminarTarjeta = async () => {
     try {
-      const subtarea = {
-        descripcion: descripcion,
-        estado_subtarea: false,
-        fecha_vencimiento: new Date(fechaVencimiento).toISOString(),
-        tarjeta: tarjetaSeleccionada.id,
-      };
-
-      const response = await axios.post(
-        "http://localhost:8000/api/subtareas/",
-        subtarea,
+      const response = await axios.delete(
+        `http://localhost:8000/api/tarjetas/${tarjetaSeleccionada.id}`,
         {
           headers: { Authorization: `Token ${token}` },
         },
       );
 
-      if (response.status === 201) {
-        toast.success("Tenemos una nueva subtarea ✨");
+      if (response.status === 204) {
+        toast.success('Eliminada')
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -562,7 +544,7 @@ export function Lista({
       </Modal>
 
       {/* Modal que se abre al presionar una tarjeta. */}
-      <Modal
+      <ModalTarjeta
         isOpen={mostrarDetalleTarjeta}
         onClose={() => setMostrarDetalleTarjeta(false)}
       >
@@ -575,7 +557,7 @@ export function Lista({
             token={token}
           />
         )}
-      </Modal>
+      </ModalTarjeta>
     </div>
   );
 }
