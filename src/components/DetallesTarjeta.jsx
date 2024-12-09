@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 
 export function DetallesTarjeta({
   tarjeta,
+  asigando,
   onClose,
   listaSubtareas,
   onInsert,
@@ -149,7 +150,7 @@ export function DetallesTarjeta({
                 Creador: {username}
               </div>
               <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212]">
-                Asignado a: Asignado
+                Asignado a: {asigando.username}
               </div>
             </div>
             <div>

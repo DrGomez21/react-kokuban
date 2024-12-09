@@ -19,11 +19,11 @@ export function KanbanPage() {
     return (
 
         <div className="container mx-auto">
-            
+
             <Header user={usuario} nombreEspacio={espacio.nombre} />
 
             <div className="justify-center mx-12 mt-6">
-                <TableroTareas token={token} tablero={tablero.id} usuario={usuario} />
+                <TableroTareas token={token} tablero={tablero.id} usuario={usuario} espacio={espacio} />
             </div>
 
         </div>

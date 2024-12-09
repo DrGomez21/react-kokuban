@@ -5,12 +5,13 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
-export function TableroTareas({ token, tablero, usuario }) {
+export function TableroTareas({ token, tablero, usuario, espacio }) {
 
     const [listas, setListas] = useState([]);
     const [tasks, setTasks] = useState([])
     const [tarjetas, setTarjetas] = useState([])
     const [activeCard, setActiveCard] = useState(null)
+    const [usuariosDelEspacio, setUsuariosDelEspacio] = useState([])
 
     const [mostrarModalNuevaLista, setMostrarModalNuevaLista] = useState(false);
 
@@ -19,7 +20,7 @@ export function TableroTareas({ token, tablero, usuario }) {
 
     const getData = async () => {
         try {
-            const [columnas, tarjetitas, columnaTarjetas] = await Promise.all([
+            const [columnas, tarjetitas, columnaTarjetas, usuarioEspacio] = await Promise.all([
                 axios.get('http://localhost:8000/api/estados/', {
                     headers: {
                         Authorization: `Token ${token}`,
@@ -31,6 +32,11 @@ export function TableroTareas({ token, tablero, usuario }) {
                     }
                 }),
                 axios.get('http://localhost:8000/api/estadoTarjetas/', {
+                    headers: {
+                        Authorization: `Token ${token}`,
+                    }
+                }),
+                axios.get('http://localhost:8000/api/usuarioEspacios/', {
                     headers: {
                         Authorization: `Token ${token}`,
                     }
@@ -49,6 +55,9 @@ export function TableroTareas({ token, tablero, usuario }) {
             setTasks(matchcolumaTarjeta)
             setTarjetas(tarjetitas.data)
 
+            setUsuariosDelEspacio(
+                usuarioEspacio.data.filter(res => res.espacio === espacio.id)
+            )
         } catch (error) {
             console.error(error)
         }
@@ -154,6 +163,7 @@ export function TableroTareas({ token, tablero, usuario }) {
                         cant_max={lista.cant_maxima}
                         usuario={usuario}
                         lista={lista}
+                        usuariosDelEspacio={usuariosDelEspacio}
                         onEliminarLista={handleEliminarLista}
                         setActiveCard={setActiveCard}
                         onDrop={onDrag}
@@ -206,9 +216,6 @@ export function TableroTareas({ token, tablero, usuario }) {
                     </form>
 
                 </div>
-
-
-
 
             </Modal>
 

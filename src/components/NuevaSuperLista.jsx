@@ -16,6 +16,7 @@ export function Lista({
   allTasks,
   usuario,
   lista,
+  usuariosDelEspacio,
   onEliminarLista,
   onActualizarTitulo,
   setActiveCard,
@@ -35,11 +36,22 @@ export function Lista({
   const [tarjetaSeleccionada, setTarjetaSeleccionada] = useState(null);
   const [subtareas, setSubtareas] = useState([]);
 
+  const [usernamesSpace, setUsernamesSpace] = useState([])
+  const [userAsignado, setUserAsignado] = useState({})
+
   const { register, handleSubmit } = useForm();
 
   const getTarea = (idTarea) => {
     return allTasks.find((t) => t["id"] === idTarea);
   };
+
+  const getAsignado = async (idTarea) => {
+    const res = await axios.get('http://127.0.0.1:8000/api/usuarioTarjetas/', { headers: { Authorization: `Token ${token}` } })
+    const ua = res.data.find((t) => t["tarjeta"] === idTarea)
+
+    const u = await axios.get(`http://127.0.0.1:8000/api/users/${ua.usuario}`, { headers: { Authorization: `Token ${token}` } })
+    setUserAsignado(u.data)
+  }
 
   const postNuevaTarea = handleSubmit(async (data) => {
     try {
@@ -52,6 +64,8 @@ export function Lista({
         creador_tarjeta: usuario.id,
       };
 
+      const idAsignado = data.optionAsignado
+
       const response = await axios.post(
         "http://localhost:8000/api/tarjetas/",
         tareaCreada,
@@ -61,6 +75,7 @@ export function Lista({
       );
 
       await insertarUnion(response.data);
+      await insertUsuarioTarjeta(response.data.id, idAsignado)
     } catch (error) {
       console.log(error);
     }
@@ -81,7 +96,6 @@ export function Lista({
       );
       if (union.status === 201) {
         toast.success("Tenemos una nueva tarjeta ✨");
-        console.log(union.data);
         setEstadoTarjetas((prevTareas) => [...prevTareas, union.data]);
         setTarjetas((prevTarjetero) => [...prevTarjetero, tarjetaNueva]);
       }
@@ -91,6 +105,25 @@ export function Lista({
       setMostrarModal(false);
     }
   };
+
+  const insertUsuarioTarjeta = async (idTarjeta, idUsuarioAsignado) => {
+    try {
+
+      const object = {
+        fecha_inicio_asignacion: new Date().toISOString(),
+        usuario: idUsuarioAsignado,
+        tarjeta: idTarjeta
+      }
+
+      const response = await axios.post('http://127.0.0.1:8000/api/usuarioTarjetas/', object, {
+        headers: { Authorization: `Token ${token}` }
+      })
+
+      console.log(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleDelete = async () => {
     try {
@@ -117,6 +150,7 @@ export function Lista({
   const abrirDetallesTarjeta = async (tarea) => {
     setTarjetaSeleccionada(tarea);
     await getSubtareas(tarea.id);
+    await getAsignado(tarea.id)
     setMostrarDetalleTarjeta(true);
   };
 
@@ -207,11 +241,30 @@ export function Lista({
     }
   };
 
+  const getUsuariosCompartidos = async () => {
+
+    if (usuariosDelEspacio.length > 0) {
+      try {
+        const users = await axios.get('http://localhost:8000/api/users/', { headers: { Authorization: `Token ${token}` } })
+        setUsernamesSpace(
+          users.data.filter(u =>
+            usuariosDelEspacio.some(u2 => u.id === u2.usuario)
+          )
+        )
+      } catch (error) {
+        setUsernamesSpace([])
+      }
+    }
+
+  }
+
   useEffect(() => {
     const tareasEnLista = tareas.filter(
       (tarea) => tarea.estado === listaId,
     ).length;
     setIsListaLlena(tareasEnLista >= maxTarjetas);
+
+    getUsuariosCompartidos()
   }, [tareas, listaId, maxTarjetas]);
 
   return (
@@ -260,7 +313,7 @@ export function Lista({
                 <Tarjeta
                   key={Date.now()}
                   tarea={tarjeta}
-                  assignedTo="asignado"
+                  assignedTo=""
                   onClick={() => abrirDetallesTarjeta(tarjeta)}
                   setActiveCard={setActiveCard}
                 />
@@ -468,26 +521,38 @@ export function Lista({
                 className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 {...register("nombre_actividad", { required: true })}
               />
+
               <textarea
                 placeholder="Descripción"
                 id="descripcion"
                 className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 {...register("descripcion", { required: true })}
               />
-              <input
-                type="text"
-                placeholder="Asignado a"
-                id="asignado"
-                className="p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                {...register("asignado", { required: true })}
-              />
+
               <input
                 type="text"
                 placeholder="Nueva etiqueta"
                 id="etiqueta"
-                className="flex-grow p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="flex-grow p-2 shadow-[.1rem_.1rem_#121212] hover:shadow-[.3rem_.3rem_#121212] duration-150 appearance-none border-2 border-black w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-4"
                 {...register("etiqueta", { required: true })}
               />
+
+              <label htmlFor="option" className="montserrat-medium text-lg mr-2">Asignado a:</label>
+              <select
+                id="option"
+                className="px-2 py-1 bg-white border border-[#121212] hover:cursor-pointer"
+                {...register("optionAsignado")}
+              >
+
+                <option className="montserrat-regular" value={usuario.id}>{usuario.username}</option>
+                {
+                  usernamesSpace.map((user) => (
+                    <option className="montserrat-regular" key={user.id} value={user.id}>{user.username}</option>
+                  ))
+                }
+
+              </select>
+              <br />
               <label
                 className="text-sm montserrat-medium mr-2"
                 htmlFor="incioTarea"
@@ -540,6 +605,7 @@ export function Lista({
         {tarjetaSeleccionada && (
           <DetallesTarjeta
             tarjeta={tarjetaSeleccionada}
+            asigando={userAsignado}
             onClose={() => setMostrarDetalleTarjeta(false)}
             listaSubtareas={subtareas}
             onInsert={postNuevaSubtarea}

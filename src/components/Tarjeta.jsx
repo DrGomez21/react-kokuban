@@ -10,6 +10,10 @@ export function Tarjeta({ tarea, assignedTo, onClick, setActiveCard }) {
     return diferenciaDias <= 0
   }
 
+  const getUsername = () => {
+
+  }
+
   return (
 
     <div
@@ -28,11 +32,9 @@ export function Tarjeta({ tarea, assignedTo, onClick, setActiveCard }) {
           {tarea.etiqueta}
         </span>
       </div>
-      {assignedTo && (
-        <div className="bg-[#F0CA81] px-2 mt-1 w-auto py-1 rounded-full text-xs montserrat-regular border border-[#121212]">
-          {assignedTo}
-        </div>
-      )}
+      {/* <div className="bg-[#F0CA81] px-2 mt-1 w-auto py-1 rounded-full text-xs montserrat-regular border border-[#121212]">
+        {assignedTo}
+      </div> */}
     </div>
   );
 }
