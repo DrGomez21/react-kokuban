@@ -173,33 +173,42 @@ export function TableroTareas({ token, tablero, usuario }) {
             </div>
 
             <Modal isOpen={mostrarModalNuevaLista} onClose={() => setMostrarModalNuevaLista(false)}>
-                <h3 className="text-lg font-semibold mb-4">Agregar Nueva Lista</h3>
 
-                <form onSubmit={agregarNuevaLista} className="mt-4">
-                    <input
-                        type="text"
-                        id='nombre'
-                        placeholder="Nombre de la lista"
-                        className="w-full p-2 border rounded mb-4"
-                        {...register("nombre", { required: true })}
-                    />
-                    <div className="flex justify-between">
-
+                <div className='p-6'>
+                    <div className='flex justify-between content-center mb-4'>
+                        <h3 className="text-lg montserrat-semibold">Agregar Nueva Lista</h3>
                         <button
-                            onClick={agregarNuevaLista}
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            onClick={() => setMostrarModalNuevaLista(false)}
+                            className="text-red-400 montserrat-medium hover:scale-110 transition duration-100"
                         >
-                            Agregar Lista
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-square-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" /><path d="M9 9l6 6m0 -6l-6 6" /></svg>
                         </button>
-                    </div>
-                </form>
 
-                <button
-                    onClick={() => setMostrarModalNuevaLista(false)}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                    Cancelar
-                </button>
+                    </div>
+
+                    <form onSubmit={agregarNuevaLista} className="mt-4">
+                        <input
+                            type="text"
+                            id='nombre'
+                            placeholder="Nombre de la lista"
+                            className="w-full p-2 border rounded mb-4"
+                            {...register("nombre", { required: true })}
+                        />
+                        <div className="flex justify-center">
+
+                            <button
+                                onClick={agregarNuevaLista}
+                                className="px-4 py-2 bg-green-300 shadow-[.1rem_.1rem_#121212] text-[#121212] montserrat-semibold border-2 border-[#121212] transition duration-100 hover:shadow-[.4rem_.4rem_#121212] hover:bg-green-400 w-full"
+                            >
+                                Agregar Lista
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+
+
+
 
             </Modal>
 
