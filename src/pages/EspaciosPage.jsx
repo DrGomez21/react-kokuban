@@ -186,7 +186,7 @@ export function EspaciosPage() {
                             espaciosInvitado.map(espacioInvi => {
                                 const espace = getEspacioCompartido(espacioInvi.espacio)
                                 return (
-                                    <EspacioItem key={espacioInvi.id} espacio={espace} token={token} usuario={espace.propietario} onDelete={handleDeleteEspacio} mostrarOpciones={false} allUsers={[]} onShare={compartirEspacio} />
+                                    <EspacioItem key={espacioInvi.id} espacio={espace} token={token} usuario={usuario} onDelete={handleDeleteEspacio} mostrarOpciones={false} allUsers={[]} onShare={compartirEspacio} />
                                 )
                             })
                         }
