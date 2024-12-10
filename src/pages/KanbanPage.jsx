@@ -1,10 +1,8 @@
 import { TableroTareas } from "../components/TableroTareas";
 import { Header } from "../components/Header";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
-import { useEffect } from "react";
-import { toast } from "react-hot-toast";
 import { useState } from "react";
+import { Estadisticas } from "../components/Estadisticas";
 
 export function KanbanPage() {
 
@@ -14,7 +12,7 @@ export function KanbanPage() {
     const espacio = location.state?.espacio
     const tablero = location.state?.tab
 
-    const [loading, setLoading] = useState(true)
+    const [mostrarEstadisticas, setMostrarEstadisticas] = useState(false);
 
     return (
 
@@ -22,9 +20,23 @@ export function KanbanPage() {
 
             <Header user={usuario} nombreEspacio={espacio.nombre} />
 
+            <button
+                onClick={() => setMostrarEstadisticas(!mostrarEstadisticas)}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600"
+            >
+                {mostrarEstadisticas ? "Ocultar estadísticas" : "Ver estadísticas"}
+            </button>
+
             <div className="justify-center mx-12 mt-6">
                 <TableroTareas token={token} tablero={tablero.id} usuario={usuario} espacio={espacio} />
             </div>
+
+            {/* Mostrar estadísticas solo si mostrarEstadisticas es true */}
+            {mostrarEstadisticas && (
+                <div className="w-96 p-6 h-80 bg-white shadow-[.3em_.3em_#121212] border-2 border-[#121212] m-9">
+                    <Estadisticas tablero={tablero} token={token} />
+                </div>
+            )}
 
         </div>
     )
