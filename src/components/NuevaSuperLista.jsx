@@ -38,6 +38,10 @@ export function Lista({
 
   const [usernamesSpace, setUsernamesSpace] = useState([])
   const [userAsignado, setUserAsignado] = useState({})
+  const [etiquetaFiltro, setEtiquetafiltro] = useState("")
+  const [filtrosFlag, setFiltrosFlag] = useState(false)
+  const [allTags, setAllTags] = useState([])
+
 
   const { register, handleSubmit } = useForm();
 
@@ -258,6 +262,19 @@ export function Lista({
 
   }
 
+  const agregarEtiquetaALaLista = () => {
+
+  }
+
+  const filtrarPorEtiqueta = (tag, mostrar) => {
+    setFiltrosFlag(mostrar)
+  }
+
+  const manejarSubmit = (e) => {
+    e.preventDefault()
+    filtrarPorEtiqueta(true)
+  }
+
   useEffect(() => {
     const tareasEnLista = tareas.filter(
       (tarea) => tarea.estado === listaId,
@@ -307,21 +324,37 @@ export function Lista({
       <div className="space-y-2">
         {tareas.map((tarea) => {
           const tarjeta = getTarea(tarea.tarjeta);
-          if (tarea.estado === listaId) {
-            return (
-              <React.Fragment key={tarjeta.id}>
-                <Tarjeta
-                  key={Date.now()}
-                  tarea={tarjeta}
-                  assignedTo=""
-                  onClick={() => abrirDetallesTarjeta(tarjeta)}
-                  setActiveCard={setActiveCard}
-                />
-                <DropArea onDrop={() => onDrop(listaId)} />
-              </React.Fragment>
-            );
+          if (etiquetaFiltro != "") {
+            if (tarea.estado === listaId && tarjeta.etiqueta === etiquetaFiltro) {
+              return (
+                <React.Fragment key={tarjeta.id}>
+                  <Tarjeta
+                    key={Date.now()}
+                    tarea={tarjeta}
+                    assignedTo=""
+                    onClick={() => abrirDetallesTarjeta(tarjeta)}
+                    setActiveCard={setActiveCard}
+                  />
+                  <DropArea onDrop={() => onDrop(listaId)} />
+                </React.Fragment>
+              );
+            }
+          } else {
+            if (tarea.estado === listaId) {
+              return (
+                <React.Fragment key={tarjeta.id}>
+                  <Tarjeta
+                    key={Date.now()}
+                    tarea={tarjeta}
+                    assignedTo=""
+                    onClick={() => abrirDetallesTarjeta(tarjeta)}
+                    setActiveCard={setActiveCard}
+                  />
+                  <DropArea onDrop={() => onDrop(listaId)} />
+                </React.Fragment>
+              );
+            }
           }
-
           return null; // Si la condición no se cumple, no se renderiza nada
         })}
 
@@ -329,7 +362,7 @@ export function Lista({
         {!isListaLlena && (
           <button
             onClick={() => setMostrarModal(true)}
-            className="bg-[#FFE500] shadow-[.2rem_.2rem_#121212] hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
+            className="bg-[#FFE500] shadow-[.2rem_.2rem_#121212] hover:scale-105 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full"
             type="submit"
           >
             + Nueva tarjeta
@@ -372,7 +405,7 @@ export function Lista({
                   setMostrarAcciones(false);
                   setMostrarEditarTitulo(true);
                 }}
-                className="flex gap-2 justify-center bg-blue-400 text-white py-2 px-4 rounded-sm w-full"
+                className="flex gap-2 border-2 border-[#121212] shadow-[.1rem_.1rem_#121212] transition duration-75 hover:shadow-[.3rem_.3rem_#121212] justify-center bg-blue-400 text-[#121212] py-2 px-4 rounded-sm w-full"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -399,7 +432,7 @@ export function Lista({
                   handleDelete();
                   setMostrarAcciones(false);
                 }}
-                className="flex gap-2 justify-center bg-red-500 text-white py-2 px-4 rounded-sm w-full"
+                className="flex gap-2 border-2 border-[#121212] shadow-[.1rem_.1rem_#121212] transition duration-75 hover:shadow-[.3rem_.3rem_#121212] justify-center bg-red-400 text-[#121212] py-2 px-4 rounded-sm w-full"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -424,26 +457,29 @@ export function Lista({
               </button>
             </div>
 
-            <form className="justify-center" onSubmit={actrualizarCantMaxima}>
-              <label className="flex-grow montserrat-regular mr-4">
-                Máximo de tarjetas:
-              </label>
-              <input
-                type="number"
-                value={maxTarjetas}
-                onChange={(e) =>
-                  setMaxTarjetas(Math.max(1, parseInt(e.target.value) || 1))
-                }
-                min={1}
-                className="w-20 p-1 border border-gray-300 rounded"
-              />
+            <form className="flex flex-col justify-center items-center" onSubmit={actrualizarCantMaxima}>
+              <div>
+                <label className="flex-grow montserrat-regular mr-4">
+                  Máximo de tarjetas:
+                </label>
+                <input
+                  type="number"
+                  value={maxTarjetas}
+                  onChange={(e) =>
+                    setMaxTarjetas(Math.max(1, parseInt(e.target.value) || 1))
+                  }
+                  min={1}
+                  className="w-20 p-1 border border-gray-300 rounded"
+                />
+
+              </div>
 
               <button
                 onClick={() => {
                   setMostrarAcciones(false);
                   actrualizarCantMaxima(maxTarjetas);
                 }}
-                className="mt-4 flex gap-2 justify-center bg-green-400 text-black montserrat-medium py-2 px-4 border-2 border-[#121212]"
+                className="mt-4 flex gap-2 hover:shadow-[.4rem_.4rem_#121212] items-center hover:scale-105 border-2 border-[#121212] shadow-[.1rem_.1rem_#121212] transition duration-75 justify-center bg-green-400 text-black montserrat-medium py-2 px-4"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -466,13 +502,50 @@ export function Lista({
               </button>
             </form>
           </div>
+
+
+          <div className="flex justify-between mt-4">
+            <form className="flex justify-center" onSubmit={manejarSubmit}>
+              <button
+                type="submit"
+                className='flex p-2 rounded-md'
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-filter">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z" />
+                </svg>
+              </button>
+              <input type="text"
+                value={etiquetaFiltro}
+                placeholder="Etiqueta"
+                className="border border-[#121212] rounded-md px-2"
+                onChange={(e) => setEtiquetafiltro(e.target.value)}
+              />
+
+            </form>
+
+            {filtrosFlag && (
+              <button
+                className='flex gap-2 border-[#121212] p-2 border rounded-md hover:bg-slate-300'
+                onClick={() => filtrarPorEtiqueta('', false)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-filter-off">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M8 4h12v2.172a2 2 0 0 1 -.586 1.414l-3.914 3.914m-.5 3.5v4l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227" />
+                  <path d="M3 3l18 18" />
+                </svg>
+              </button>
+            )}
+          </div>
+
         </div>
-      </Modal>
+      </Modal >
 
       {/* Modal de Editar Título */}
-      <Modal
+      < Modal
         isOpen={mostrarEditarTitulo}
-        onClose={() => setMostrarEditarTitulo(false)}
+        onClose={() => setMostrarEditarTitulo(false)
+        }
       >
         <div className="p-2">
           <h3 className="text-lg montserrat-bold mb-4">
@@ -505,10 +578,10 @@ export function Lista({
             </button>
           </div>
         </div>
-      </Modal>
+      </Modal >
 
       {/* Modal de Nueva Tarea */}
-      <Modal isOpen={mostrarModal} onClose={() => setMostrarModal(false)}>
+      < Modal isOpen={mostrarModal} onClose={() => setMostrarModal(false)}>
         <div className="p-5 mt-3">
           <h3 className="text-lg montserrat-bold mb-4">Agregar Nueva Tarea</h3>
 
@@ -595,10 +668,10 @@ export function Lista({
             Descartar
           </button>
         </div>
-      </Modal>
+      </Modal >
 
       {/* Modal que se abre al presionar una tarjeta. */}
-      <ModalTarjeta
+      < ModalTarjeta
         isOpen={mostrarDetalleTarjeta}
         onClose={() => setMostrarDetalleTarjeta(false)}
       >
@@ -613,7 +686,7 @@ export function Lista({
             onDelete={eliminarTarjeta}
           />
         )}
-      </ModalTarjeta>
-    </div>
+      </ModalTarjeta >
+    </div >
   );
 }

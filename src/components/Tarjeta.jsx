@@ -19,7 +19,9 @@ export function Tarjeta({ tarea, assignedTo, onClick, setActiveCard }) {
     <div
       className={`${porVencer() ? 'bg-red-400' : 'bg-[#F5FF70]'} border-[3px] border-[#121212] hover:shadow-[.4rem_.4rem_#121212] hover:cursor-pointer duration-150 
             p-4 w-full shadow-md relative
-            active:opacity-75 active:rounded-lg`}
+            active:opacity-75 active:rounded-lg
+            hover:scale-105
+            hover:bg-[#effa57]`}
       onClick={onClick}
       draggable
       onDragStart={() => setActiveCard(tarea.id)}

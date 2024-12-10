@@ -15,8 +15,9 @@ export function TableroTareas({ token, tablero, usuario, espacio }) {
 
     const [mostrarModalNuevaLista, setMostrarModalNuevaLista] = useState(false);
 
-    const { register, handleSubmit } = useForm()
+    const [tarjetasSinFiltrar, setTarjetasSinFiltrar] = useState([])
 
+    const { register, handleSubmit } = useForm()
 
     const getData = async () => {
         try {
