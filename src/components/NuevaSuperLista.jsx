@@ -18,7 +18,6 @@ export function Lista({
   lista,
   usuariosDelEspacio,
   onEliminarLista,
-  onActualizarTitulo,
   setActiveCard,
   onDrop,
   setEstadoTarjetas,
@@ -37,25 +36,14 @@ export function Lista({
   const [subtareas, setSubtareas] = useState([]);
 
   const [usernamesSpace, setUsernamesSpace] = useState([])
-  const [userAsignado, setUserAsignado] = useState({})
   const [etiquetaFiltro, setEtiquetafiltro] = useState("")
   const [filtrosFlag, setFiltrosFlag] = useState(false)
-  const [allTags, setAllTags] = useState([])
-
 
   const { register, handleSubmit } = useForm();
 
   const getTarea = (idTarea) => {
     return allTasks.find((t) => t["id"] === idTarea);
   };
-
-  const getAsignado = async (idTarea) => {
-    const res = await axios.get('http://127.0.0.1:8000/api/usuarioTarjetas/', { headers: { Authorization: `Token ${token}` } })
-    const ua = res.data.find((t) => t["tarjeta"] === idTarea)
-
-    const u = await axios.get(`http://127.0.0.1:8000/api/users/${ua.usuario}`, { headers: { Authorization: `Token ${token}` } })
-    setUserAsignado(u.data)
-  }
 
   const postNuevaTarea = handleSubmit(async (data) => {
     try {
@@ -66,9 +54,8 @@ export function Lista({
         fecha_creacion: new Date(data.inicioTarea).toISOString(),
         fecha_vencimiento: new Date(data.finTarea).toISOString(),
         creador_tarjeta: usuario.id,
+        asignado_a: data.optionAsignado
       };
-
-      const idAsignado = data.optionAsignado
 
       const response = await axios.post(
         "http://localhost:8000/api/tarjetas/",
@@ -79,7 +66,6 @@ export function Lista({
       );
 
       await insertarUnion(response.data);
-      await insertUsuarioTarjeta(response.data.id, idAsignado)
     } catch (error) {
       console.log(error);
     }
@@ -110,25 +96,6 @@ export function Lista({
     }
   };
 
-  const insertUsuarioTarjeta = async (idTarjeta, idUsuarioAsignado) => {
-    try {
-
-      const object = {
-        fecha_inicio_asignacion: new Date().toISOString(),
-        usuario: idUsuarioAsignado,
-        tarjeta: idTarjeta
-      }
-
-      const response = await axios.post('http://127.0.0.1:8000/api/usuarioTarjetas/', object, {
-        headers: { Authorization: `Token ${token}` }
-      })
-
-      console.log(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
@@ -154,7 +121,6 @@ export function Lista({
   const abrirDetallesTarjeta = async (tarea) => {
     setTarjetaSeleccionada(tarea);
     await getSubtareas(tarea.id);
-    await getAsignado(tarea.id)
     setMostrarDetalleTarjeta(true);
   };
 
@@ -259,10 +225,6 @@ export function Lista({
         setUsernamesSpace([])
       }
     }
-
-  }
-
-  const agregarEtiquetaALaLista = () => {
 
   }
 
@@ -503,7 +465,7 @@ export function Lista({
             </form>
           </div>
 
-
+          {/* FILTROS */}
           <div className="flex justify-between mt-4">
             <form className="flex justify-center" onSubmit={manejarSubmit}>
               <button
@@ -538,6 +500,25 @@ export function Lista({
             )}
           </div>
 
+          <div className="mt-4">
+            <form action="">
+              <label htmlFor="option" className="p-2 montserrat-medium text-sm">Usuario:</label>
+              <select
+                id="option"
+                className="px-2 py-1 bg-white border border-[#121212] rounded-md hover:cursor-pointer"
+                {...register("userFiltrar")}
+              >
+
+                <option className="montserrat-regular" value={usuario.id}>{usuario.username}</option>
+                {
+                  usernamesSpace.map((user) => (
+                    <option className="montserrat-regular" key={user.id} value={user.id}>{user.username}</option>
+                  ))
+                }
+
+              </select>
+            </form>
+          </div>
         </div>
       </Modal >
 
@@ -617,10 +598,10 @@ export function Lista({
                 {...register("optionAsignado")}
               >
 
-                <option className="montserrat-regular" value={usuario.id}>{usuario.username}</option>
+                <option className="montserrat-regular" value={usuario.username}>{usuario.username}</option>
                 {
                   usernamesSpace.map((user) => (
-                    <option className="montserrat-regular" key={user.id} value={user.id}>{user.username}</option>
+                    <option className="montserrat-regular" key={user.id} value={user.username}>{user.username}</option>
                   ))
                 }
 
@@ -671,14 +652,14 @@ export function Lista({
       </Modal >
 
       {/* Modal que se abre al presionar una tarjeta. */}
-      < ModalTarjeta
+      <ModalTarjeta
         isOpen={mostrarDetalleTarjeta}
         onClose={() => setMostrarDetalleTarjeta(false)}
       >
         {tarjetaSeleccionada && (
           <DetallesTarjeta
             tarjeta={tarjetaSeleccionada}
-            asigando={userAsignado}
+            asigando={{}}
             onClose={() => setMostrarDetalleTarjeta(false)}
             listaSubtareas={subtareas}
             onInsert={postNuevaSubtarea}
