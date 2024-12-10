@@ -23,9 +23,9 @@ export function LandingPage() {
                 </div>
             </div>
 
-            <img src="../../public/kanban-method.png" alt="Imagen de referencia" />
-        
+            <img src="/kanban-method.png" alt="Imagen de referencia" />
+
         </div>
-        
+
     )
 }
