@@ -31,7 +31,7 @@ export function DetallesTarjeta({
       setUsername(response.data.username);
     } catch (error) {
       console.log(error);
-      setUsername("Anónimo");
+      setUsername("Owner");
     }
   };
 
@@ -150,7 +150,7 @@ export function DetallesTarjeta({
                 Creador: {username}
               </div>
               <div className="bg-[#F0CA81] p-2 rounded-sm text-sm montserrat-medium border border-[#121212]">
-                Asignado a: {asigando.username}
+                Asignado a: {tarjeta.asignado_a}
               </div>
             </div>
             <div>
