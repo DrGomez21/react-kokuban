@@ -3,6 +3,7 @@ import { Header } from "../components/Header";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Estadisticas } from "../components/Estadisticas";
+import { EstadisticaAsignados } from "../components/EstadisticaAsignados";
 
 export function KanbanPage() {
 
@@ -33,9 +34,25 @@ export function KanbanPage() {
 
             {/* Mostrar estadísticas solo si mostrarEstadisticas es true */}
             {mostrarEstadisticas && (
-                <div className="w-96 p-6 h-80 bg-white shadow-[.3em_.3em_#121212] border-2 border-[#121212] m-9">
-                    <Estadisticas tablero={tablero} token={token} />
+
+                <div className="flex flex-col mt-6 w-full">
+                    <h3 className="montserrat-bold text-2xl">Dashboard</h3>
+                    <div className="flex justify-between w-full">
+                        <div className="w-96 p-6 h-80 bg-white shadow-[.3em_.3em_#121212] border-2 border-[#121212] m-9">
+                            <Estadisticas tablero={tablero} token={token} />
+                        </div>
+
+                        <div className="w-96 p-6 h-80 bg-white shadow-[.3em_.3em_#121212] border-2 border-[#121212] m-9">
+                            <h4 className="montserrat-semibold text-lg">Asignados</h4>
+                            <EstadisticaAsignados tablero={tablero} token={token} />
+                        </div>
+
+                    </div>
+
                 </div>
+
+
+
             )}
 
         </div>
