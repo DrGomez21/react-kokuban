@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Estadisticas } from "../components/Estadisticas";
 import { EstadisticaAsignados } from "../components/EstadisticaAsignados";
+import { EstadisticasAtrasadas } from "../components/EstadisticasAtrasadas";
 
 export function KanbanPage() {
 
@@ -23,9 +24,16 @@ export function KanbanPage() {
 
             <button
                 onClick={() => setMostrarEstadisticas(!mostrarEstadisticas)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600"
+                className="flex gap-2 ml-12 mt-4 bg-[#ae60f7] shadow-[.2rem_.2rem_#121212] hover:scale-105 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-white montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-fit"
             >
-                {mostrarEstadisticas ? "Ocultar estadísticas" : "Ver estadísticas"}
+                <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-layout-dashboard">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M5 4h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" />
+                    <path d="M5 16h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" />
+                    <path d="M15 12h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" />
+                    <path d="M15 4h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" />
+                </svg>
+                {mostrarEstadisticas ? "Ocultar dashboard" : "Ver dashboard"}
             </button>
 
             <div className="justify-center mx-12 mt-6">
@@ -45,6 +53,11 @@ export function KanbanPage() {
                         <div className="w-96 p-6 h-80 bg-white shadow-[.3em_.3em_#121212] border-2 border-[#121212] m-9">
                             <h4 className="montserrat-semibold text-lg">Asignados</h4>
                             <EstadisticaAsignados tablero={tablero} token={token} />
+                        </div>
+
+                        <div className="w-96 p-6 h-80 bg-white shadow-[.3em_.3em_#121212] border-2 border-[#121212] m-9">
+                            <h4 className="montserrat-semibold text-lg">Atrasadas</h4>
+                            <EstadisticasAtrasadas tablero={tablero} token={token} />
                         </div>
 
                     </div>

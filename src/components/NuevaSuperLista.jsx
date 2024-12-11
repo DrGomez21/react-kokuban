@@ -283,10 +283,15 @@ export function Lista({
       <div className="flex justify-between items-center py-2 mb-4">
         <h4 className="montserrat-bold text-2xl mr-1">{nuevoTitulo}</h4>
         <button
-          className="w-8 h-8 bg-slate-300 rounded hover:bg-slate-200 flex items-center justify-center"
+          className="bg-slate-300 p-1 rounded-md border-2 border-[#121212] hover:bg-slate-400 transition duration-75 hover:scale-105 hover:shadow-[.2rem_.2rem_#121212]"
           onClick={() => setMostrarAcciones(true)}
         >
-          <span className="text-lg">⋮</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-dots-vertical">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+          </svg>
         </button>
       </div>
 
