@@ -86,10 +86,10 @@ export function EspacioItem({ espacio, token, usuario, onDelete, mostrarOpciones
     }
   };
 
-  if (estado === 1) {
+  if (estado === 1 || estado === null) {
 
     return (
-      <div className={`flex justify-between items-center ${estado === 1 ? "bg-[#F5FF70]" : "bg-red-400"} border-[3px] shadow-[.2rem_.2rem_#121212] border-[#121212] hover:shadow-[.4rem_.4rem_#121212] hover:cursor-pointer duration-150  w-full`}>
+      <div className={`flex justify-between items-center bg-[#F5FF70] border-[3px] shadow-[.2rem_.2rem_#121212] border-[#121212] hover:shadow-[.4rem_.4rem_#121212] hover:cursor-pointer duration-150  w-full`}>
         <div
           onClick={irAlTablero}
           className="py-4 w-full h-full">
@@ -117,7 +117,7 @@ export function EspacioItem({ espacio, token, usuario, onDelete, mostrarOpciones
                 onClick={() => setMostrarModalEliminar(false)}
                 className="text-red-400 montserrat-medium"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-square-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" /><path d="M9 9l6 6m0 -6l-6 6" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-square-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" /><path d="M9 9l6 6m0 -6l-6 6" /></svg>
               </button>
             </div>
 
@@ -134,6 +134,22 @@ export function EspacioItem({ espacio, token, usuario, onDelete, mostrarOpciones
                 <path d="M12 16h.01" />
               </svg>
               Inactivar
+            </button>
+
+            <button
+              onClick={() => {
+                handleDelete()
+                setMostrarModalEliminar(false)
+              }}
+              className="flex gap-2 justify-center bg-[#ff8686] mt-4 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full">
+              <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-trash-x">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M4 7h16" />
+                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                <path d="M10 12l4 4m0 -4l-4 4" />
+              </svg>
+              Eliminar
             </button>
 
             <button
@@ -271,7 +287,7 @@ export function EspacioItem({ espacio, token, usuario, onDelete, mostrarOpciones
                 onClick={() => setMostrarModalEliminar(false)}
                 className="text-red-400 montserrat-medium"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-square-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" /><path d="M9 9l6 6m0 -6l-6 6" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-square-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" /><path d="M9 9l6 6m0 -6l-6 6" /></svg>
               </button>
             </div>
 
@@ -294,6 +310,21 @@ export function EspacioItem({ espacio, token, usuario, onDelete, mostrarOpciones
                 <path d="M9 12l2 2l4 -4" />
               </svg>
               Reactivar
+            </button>
+            <button
+              onClick={() => {
+                handleDelete()
+                setMostrarModalEliminar(false)
+              }}
+              className="flex gap-2 justify-center bg-[#ff8686] mt-4 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full">
+              <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-trash-x">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M4 7h16" />
+                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                <path d="M10 12l4 4m0 -4l-4 4" />
+              </svg>
+              Eliminar
             </button>
           </div>
 
