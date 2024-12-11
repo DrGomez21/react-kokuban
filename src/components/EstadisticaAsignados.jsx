@@ -101,6 +101,7 @@ export const EstadisticaAsignados = ({ tablero, token }) => {
           label
         />
         <Tooltip />
+
       </PieChart>
     </ResponsiveContainer>
   )

@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 
 export function EspacioItem({ espacio, token, usuario, onDelete, mostrarOpciones, allUsers, onShare }) {
 
+    // TODO: HACER QUE SE INACTIVE EL ESPACIO.
+
     const navigate = useNavigate()
 
     const { register, handleSubmit } = useForm()
@@ -71,7 +73,7 @@ export function EspacioItem({ espacio, token, usuario, onDelete, mostrarOpciones
                             setMostrarModalEliminar(false)
                         }}
                         className="bg-[#ff8686] mt-4 hover:shadow-[.4rem_.4rem_#121212] duration-150 text-[#121212] montserrat-medium py-2 px-4 border-2 border-black rounded-sm focus:outline-none w-full">
-                        Eliminar espacio
+                        Inactivar espacio
                     </button>
 
                     <form onSubmit={llamarACompartir}>
